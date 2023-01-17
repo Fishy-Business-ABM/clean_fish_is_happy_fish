@@ -1,7 +1,7 @@
 import model
 
 from typing import Tuple, List
-from util import normalize, euclidian_distance
+from util import normalize, euclidian_distance, compute_norm
 
 class Fish(object):
     """docstring for Fish"""
@@ -73,7 +73,7 @@ class Fish(object):
         for i in range(len(steering)):
             for fish in neighbors:
                 steering[i] += fish.pos[i]
-            steering[i] /= len(neighbors)
+            steering[i] = steering[i] / len(neighbors) - self.pos[i]
 
         return steering
 
@@ -84,8 +84,16 @@ class Fish(object):
 
         neo_velocity = []
         for i in range(len(self.pos)):
-            component = self.velocity[i] + alignment[i] + separation[i] + cohesion[i]
+            v = 1
+            a = 1
+            s = 1
+            c = 1
+            component = v * self.velocity[i] + a * alignment[i] + s * separation[i] + c * cohesion[i]
             neo_velocity.append(component)
+        
+        speed = compute_norm(neo_velocity)
+        if speed > self.max_speed:
+            neo_velocity = [ comp * self.max_speed for comp in normalize(neo_velocity) ]
 
         neo_pos = [ self.pos[i] + neo_velocity[i] for i in range(len(self.pos)) ]
 
