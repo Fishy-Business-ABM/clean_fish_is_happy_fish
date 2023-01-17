@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 dimension = 10
 initial_max_speed = 1
-perception = 2
+perception = 6
 n_fish = 100
 zoom = 10
 
