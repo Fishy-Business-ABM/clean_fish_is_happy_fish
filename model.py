@@ -1,5 +1,5 @@
 from util import euclidian_distance
-from copy import deepcopy
+from copy import copy
 
 class Model(object):
     def __init__(self):
@@ -39,8 +39,8 @@ class Model(object):
         all entities, such that it is not a problem if foods or entities are removed from
         the set during iteration.
         '''
-        regrowing_foods_copy = deepcopy(self.regrowing_foods)
-        entities_copy = deepcopy(self.entities)
+        regrowing_foods_copy = copy(self.regrowing_foods)
+        entities_copy = copy(self.entities)
         for food in regrowing_foods_copy:
             food.step()
         for entity in entities_copy:
