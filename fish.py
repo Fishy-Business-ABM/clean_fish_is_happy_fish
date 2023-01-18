@@ -1,3 +1,4 @@
+from numpy import euler_gamma
 import model
 
 from typing import Tuple, List
@@ -24,14 +25,18 @@ class Fish(object):
 
     def align(self) -> List[float]:
         neighbors = self.model.get_neighbors(self, self.perception, False)
-        steering = [0 for _ in self.pos]
+        steering = [float(0) for _ in self.pos]
         if len(neighbors) == 0:
             return steering
 
         for i in range(len(self.pos)):
             for fish in neighbors:
-                steering[i] += fish.velocity[i]
-            steering[i] /= len(neighbors)
+                dist = euclidian_distance(self.pos, fish.pos)
+                if dist == 0:
+                    continue
+                dist_squared = dist **2
+                steering[i] += fish.velocity[i]/ dist_squared 
+            steering[i] /= len(neighbors) 
 
 
         normalized_steering = normalize(steering)
@@ -43,7 +48,7 @@ class Fish(object):
         return scaled_up_steering
 
     def separation(self) -> List[float]:
-        steering = [0 for _ in self.pos]
+        steering = [float(0) for _ in self.pos]
         neighbors = self.model.get_neighbors(self, self.perception, False)
 
         if len(neighbors) == 0:
@@ -64,7 +69,7 @@ class Fish(object):
         return steering
     
     def cohesion(self) -> List[float]:
-        steering = [0 for _ in self.pos]
+        steering = [float(0) for _ in self.pos]
         neighbors = self.model.get_neighbors(self, self.perception, False)
 
         if len(neighbors) == 0:
@@ -72,7 +77,12 @@ class Fish(object):
 
         for i in range(len(steering)):
             for fish in neighbors:
-                steering[i] += fish.pos[i]
+                dist = euclidian_distance(self.pos, fish.pos)
+                if dist == 0:
+                    continue
+                dist_squared = dist **2
+
+                steering[i] += fish.pos[i] / dist_squared
             steering[i] = steering[i] / len(neighbors) - self.pos[i]
 
         return steering
