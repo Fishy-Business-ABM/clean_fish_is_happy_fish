@@ -60,10 +60,37 @@ class PrintRecorder(object):
 		print(f"{self.counter}: {out}")#" [{out}]")
 		self.counter += 1
 
+class BigFitTestRecorder(object):
+	def __init__(self):
+		super(BigFitTestRecorder, self).__init__()
+		self.counter = 0
+		self.results = []
+
+	def __call__(self, arg):
+		out = sum(map(lambda x: 0 if x[1] is None else x[1], arg))
+		self.results.append(out)
+		self.counter += 1
+
+	def test(self):
+		avg_val = sum(self.results) / len(self.results)
+		assert self.results[0] <= avg_val and avg_val <= self.results[-1] 
 
 def big_is_better_fit(individual):
 	return individual[0][0] + individual[0][1] + individual[0][2]
 
+def naive_genetic_algorithm_test():
+	pr = BigFitTestRecorder()
+	pop = [[random.randint(0, 10) for _ in range(3)] for _ in range(5)]
+	ga = GeneticAlgorithm(
+		pop,
+		big_is_better_fit,
+		1,
+		lambda x: x * 1.1,
+		0.1
+	)
+	ga.run(5000, pr)
+	pr.test()
+	print("PASSED NAIVE GA TEST")
 
 if __name__ == '__main__':
 	pr = PrintRecorder()
@@ -76,3 +103,4 @@ if __name__ == '__main__':
 		0.1
 	)
 	ga.run(5000, pr)
+	naive_genetic_algorithm_test()
