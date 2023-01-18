@@ -1,21 +1,19 @@
-import model
-
+from model import Model
+from agent import Agent
 from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
 
-class Fish(object):
+class Fish(Agent):
     """docstring for Fish"""
     def __init__(
         self,
-        model: model.Model,
+        model: Model,
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
         max_speed: float
     ):
-        super(Fish, self).__init__()
-
-        self.pos = pos
+        super(Fish, self).__init__(pos)
         self.perception = perception
         self.model = model
         self.model.add_entity(self)
