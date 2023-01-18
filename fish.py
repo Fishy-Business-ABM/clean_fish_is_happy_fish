@@ -1,5 +1,6 @@
 from numpy import euler_gamma
 import model
+from p5 import stroke,circle
 
 from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
@@ -86,6 +87,10 @@ class Fish(object):
             steering[i] = steering[i] / len(neighbors) - self.pos[i]
 
         return steering
+
+    def show(self):
+        stroke(255)
+        circle(self.pos,10)
 
     def step(self):
         alignment = self.align()
