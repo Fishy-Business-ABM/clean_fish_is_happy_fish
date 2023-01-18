@@ -1,4 +1,5 @@
 import model
+from food import Food
 
 from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
@@ -11,7 +12,10 @@ class Fish(object):
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
-        max_speed: float
+        max_speed: float,
+        metabolism: float,
+        energy: float,
+        eat_radius: float
     ):
         super(Fish, self).__init__()
 
@@ -21,9 +25,12 @@ class Fish(object):
         self.model.add_entity(self)
         self.velocity = velocity
         self.max_speed = max_speed
+        self.metabolism = metabolism
+        self.energy = energy
+        self.eat_radius = eat_radius
 
     def align(self) -> List[float]:
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.model.get_neighbors(self, self.model.entities, self.perception, False)
         steering = [0 for _ in self.pos]
         if len(neighbors) == 0:
             return steering
@@ -44,7 +51,7 @@ class Fish(object):
 
     def separation(self) -> List[float]:
         steering = [0 for _ in self.pos]
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.model.get_neighbors(self, self.model.entities, self.perception, False)
 
         if len(neighbors) == 0:
             return steering
@@ -65,7 +72,7 @@ class Fish(object):
     
     def cohesion(self) -> List[float]:
         steering = [0 for _ in self.pos]
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.model.get_neighbors(self, self.model.entities, self.perception, False)
 
         if len(neighbors) == 0:
             return steering
@@ -76,6 +83,22 @@ class Fish(object):
             steering[i] = steering[i] / len(neighbors) - self.pos[i]
 
         return steering
+
+    # Eat neighboring food and gain energy
+    def eat(self):
+        available_foods = self.model.get_neighbors(self, self.model.foods, self.eat_radius, False)
+        
+        for food in available_foods:
+            self.energy += food.available_fraction
+            food.available_fraction = 0
+            self.model.regrowing_foods.add(food)
+    
+    # Do metabolism and possibly die
+    def metabolize(self):
+        self.energy -= self.metabolism
+
+        if self.energy < 0:
+            self.model.remove_entity(self)
 
     def step(self):
         alignment = self.align()
@@ -100,4 +123,5 @@ class Fish(object):
         self.velocity = tuple(neo_velocity)
         self.pos = tuple(neo_pos)
 
-
+        self.eat()
+        self.metabolize()
