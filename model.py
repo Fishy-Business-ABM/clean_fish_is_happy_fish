@@ -37,7 +37,8 @@ class Model(object):
         '''
         TODO: change this to an elegant way of iterating over all regrowing foods and
         all entities, such that it is not a problem if foods or entities are removed from
-        the set during iteration.
+        the set during iteration. Also, we should randomize the order in which the fish
+        step, otherwise earlier fish always eat away the food of later fish.
         '''
         regrowing_foods_copy = copy(self.regrowing_foods)
         entities_copy = copy(self.entities)
