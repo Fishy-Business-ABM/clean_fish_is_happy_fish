@@ -1,9 +1,10 @@
 from util import euclidian_distance
 
 class Model(object):
-    def __init__(self):
+    def __init__(self,width,height):
         super(Model, self).__init__()
         self.entities = set()
+        self.window = (width,height)
 
     def add_entity(self, entity):
         assert "pos" in entity.__dict__ and isinstance(entity.pos, tuple)
