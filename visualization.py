@@ -5,11 +5,11 @@ from random import uniform
 
 dimension = 150
 perception = 75
-n_fish = 30
+n_fish = 50
 initial_max_speed = 10
-width = 200
-height = 150
-sea = model.Model(960-width,540+height)
+width = 1920
+height = 1080
+sea = model.Model(width,height)
 
 for _ in range(n_fish):
     pos = (uniform(960 -dimension,960 +dimension),uniform(540-dimension, 540+ dimension))
