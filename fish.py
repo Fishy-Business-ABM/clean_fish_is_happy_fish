@@ -13,7 +13,8 @@ class Fish(object):
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
-        max_speed: float
+        max_speed: float,
+        max_force: float
     ):
         super(Fish, self).__init__()
 
@@ -23,6 +24,7 @@ class Fish(object):
         self.model.add_entity(self)
         self.velocity = velocity
         self.max_speed = max_speed
+        self.max_force = max_force
 
     def align(self) -> List[float]:
         neighbors = self.model.get_neighbors(self, self.perception, False)
@@ -35,8 +37,7 @@ class Fish(object):
                 dist = euclidian_distance(self.pos, fish.pos)
                 if dist == 0:
                     continue
-                dist_squared = dist **2
-                steering[i] += fish.velocity[i]/ dist_squared 
+                steering[i] += fish.velocity[i]
             steering[i] /= len(neighbors) 
 
 
@@ -44,7 +45,10 @@ class Fish(object):
         if normalized_steering is None:
             return [0 for _ in self.pos]
 
-        scaled_up_steering = [component * self.max_speed for component in normalized_steering]          
+        scaled_up_steering = [component * self.max_speed - self.velocity[i] for i,component in enumerate(normalized_steering)]          
+
+        if compute_norm(tuple(scaled_up_steering))> self.max_force:
+            scaled_up_steering = [value * self.max_force for value in normalize(tuple(scaled_up_steering))]
 
         return scaled_up_steering
 
@@ -67,10 +71,15 @@ class Fish(object):
                 averaged_normalized_steering_dist = normalized_steering_dist / len(neighbors)
                 steering[i] = averaged_normalized_steering_dist
 
+            if compute_norm(tuple(steering)) > self.max_force:
+                steering = [value * self.max_force for value in normalize(tuple(steering))]
+
         return steering
     
     def cohesion(self) -> List[float]:
         steering = [float(0) for _ in self.pos]
+        com = [float(0) for _ in self.pos]
+        dist_com = [float(0) for _ in self.pos]
         neighbors = self.model.get_neighbors(self, self.perception, False)
 
         if len(neighbors) == 0:
@@ -81,10 +90,20 @@ class Fish(object):
                 dist = euclidian_distance(self.pos, fish.pos)
                 if dist == 0:
                     continue
-                dist_squared = dist **2
 
-                steering[i] += fish.pos[i] / dist_squared
-            steering[i] = steering[i] / len(neighbors) - self.pos[i]
+                com[i] += fish.pos[i] 
+                
+            com[i] /= len(neighbors)
+            dist_com[i] = com[i] - self.pos[i]
+
+        if compute_norm(tuple(dist_com)) > 0:
+            dist_com = [value * self.max_speed for value in normalize(tuple(dist_com))]
+
+        steering = [dist_com[i]-self.velocity[i] for i in range(len(dist_com))]
+
+        if compute_norm(tuple(steering)) > self.max_force:
+            steering = [value * self.max_force for value in normalize(tuple(steering))]
+
 
         return steering
 
@@ -101,8 +120,8 @@ class Fish(object):
         for i in range(len(self.pos)):
             v = 1
             a = 1
-            s = 1
-            c = 1
+            s = 2.5
+            c = 0.05
             component = v * self.velocity[i] + a * alignment[i] + s * separation[i] + c * cohesion[i]
             neo_velocity.append(component)
         
