@@ -21,7 +21,7 @@ class Fish(Agent):
         self.max_speed = max_speed
 
     def align(self) -> List[float]:
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.neighbors
         steering = [0 for _ in self.pos]
         if len(neighbors) == 0:
             return steering
@@ -42,7 +42,7 @@ class Fish(Agent):
 
     def separation(self) -> List[float]:
         steering = [0 for _ in self.pos]
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.neighbors
 
         if len(neighbors) == 0:
             return steering
@@ -63,7 +63,7 @@ class Fish(Agent):
     
     def cohesion(self) -> List[float]:
         steering = [0 for _ in self.pos]
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.neighbors
 
         if len(neighbors) == 0:
             return steering
@@ -76,6 +76,8 @@ class Fish(Agent):
         return steering
 
     def step(self):
+        self.neighbors = self.model.get_neighbors(self, self.perception, False)
+
         alignment = self.align()
         separation = self.separation()
         cohesion = self.cohesion()
