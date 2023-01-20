@@ -67,18 +67,18 @@ class Shark(Agent):
 	def step(self):
 		neighbors = list(self.model.get_neighbors_w_distance(self, self.perception, False))
 		neighbors.sort(key=lambda x: x[1]) # sort them by who is closer
-		print(f"neighbors: {neighbors}")
+
 		neighbors = neighbors[:self.nb_seeable_fish]
 		prey_positions = reduce(lambda acc, elm: acc + [elm[0].pos[0]] + [elm[0].pos[1]], neighbors, [])
 		prey_positions += [0 for _ in range(2 * self.nb_seeable_fish - len(prey_positions))]
-		print(f"prey_positions: {prey_positions}")
+
 		intermediary_outputs = [prey_positions]
 		for layer in self.brain:
 			intermediary = [neuron(intermediary_outputs[-1]) for neuron in layer]
 			intermediary_outputs.append(intermediary)
-		print(f"intermediary_outputs: {intermediary_outputs}")
+
 		angle, norm = intermediary_outputs[-1][0], intermediary_outputs[-1][1]
 		new_x = self.pos[0] + norm * cos(angle)
 		new_y = self.pos[1] + norm * sin(angle)
 		self.pos = (new_x, new_y)
-		print(f"pos: {self.pos}")
+

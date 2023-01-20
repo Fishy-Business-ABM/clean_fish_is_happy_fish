@@ -180,11 +180,13 @@ def naive_test_shark():
             assert sharky.brain[1][i_out].weights[i] == 30 + 3 * i_out + i
 
     sharky.step()
-
+    assert sharky.pos == (0, 0)
     for i in range(10):
         Fish(sea, (i, i), 0, (0, 0), 0, 0, 0, 0)
 
     sharky.step()
+    assert sharky.pos == (23751.808899627933, 24411.78350705977)
+    print("PASSED NAIVE TEST SHARK")
 
 if __name__ == '__main__':
     naive_test_add_fish()
