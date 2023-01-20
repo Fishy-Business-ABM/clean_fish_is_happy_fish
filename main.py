@@ -10,13 +10,13 @@ import random
 import math
 
 def naive_test_add_fish():
-    sea = Model()
+    sea = Model(100, 100)
     fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
     assert len(sea.entities) == 1
     print("PASSED NAIVE TEST")
 
 def naive_fuzzy_test_add_fish():
-    sea = Model()
+    sea = Model(100, 100)
     n_fish = random.randint(1, 1000)
     for _ in range(n_fish):
         Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
@@ -24,13 +24,13 @@ def naive_fuzzy_test_add_fish():
     print("PASSED NAIVE FUZZY TEST")
 
 def naive_test_add_food():
-    sea = Model()
+    sea = Model(100, 100)
     food = Food(sea, (0,0), 1)
     assert len(sea.foods) == 1
     print("PASSED NAIVE TEST ADD FOOD")
 
 def naive_test_get_neighbor():
-    sea = Model()
+    sea = Model(100, 100)
     n_fish = random.randint(1, 1000)
     base_fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
     for _ in range(n_fish):
@@ -72,7 +72,7 @@ def naive_fuzzy_test_normalize():
     print("PASSED NAIVE FUZZY TEST NORMALIZE")
 
 def naive_sanity_check_test_step():
-    sea = Model()
+    sea = Model(100, 100)
     Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0).step()
     Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0).step()
     Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0).step()
@@ -83,14 +83,14 @@ def naive_sanity_check_test_step():
 
 
 def naive_test_start_regrowing():
-    sea = Model()
+    sea = Model(100, 100)
     food = Food(sea, (0,0), 1)
     sea.start_regrowing(food)
     assert len(sea.regrowing_foods) == 1
     print("PASSED NAIVE TEST START REGROWING")
 
 def naive_fuzzy_test_regrow():
-    sea = Model()
+    sea = Model(100, 100)
     for _ in range(100):
         regrowth_rate = random.random()
         available_fraction = random.random()
@@ -105,7 +105,7 @@ def naive_fuzzy_test_regrow():
     print("PASSED NAIVE FUZZY TEST REGROW")
 
 def naive_test_fish_eat():
-    sea = Model()
+    sea = Model(100, 100)
     food = Food(sea, (0,0), 0.5)
     sea.add_food(food)
     fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
@@ -124,7 +124,7 @@ def naive_test_fish_eat():
     print("PASSED NAIVE TEST FISH EAT")
 
 def naive_test_fish_metabolize():
-    sea = Model()
+    sea = Model(100, 100)
     fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0.8, 1, 0)
 
     fish.metabolize()
@@ -137,7 +137,7 @@ def naive_test_fish_metabolize():
     print("PASSED NAIVE TEST FISH METABOLIZE")
 
 def naive_test_model_step():
-    sea = Model()
+    sea = Model(100, 100)
 
     fish = Fish(sea, (0,0), 1, (1,0), 1, 0.5, 1, 1)
     sea.add_entity(fish)
@@ -152,7 +152,7 @@ def naive_test_model_step():
     
 
 def naive_test_shark():
-    sea = Model()
+    sea = Model(100, 100)
     sharky = Shark(
         model=sea,
         pos=(0, 0),

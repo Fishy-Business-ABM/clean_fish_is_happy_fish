@@ -2,9 +2,10 @@ from util import euclidian_distance
 from copy import copy
 
 class Model(object):
-    def __init__(self):
+    def __init__(self,width,height):
         super(Model, self).__init__()
         self.entities = set()
+        self.window = (width,height)
         self.foods = set()
         self.regrowing_foods = set()
 
