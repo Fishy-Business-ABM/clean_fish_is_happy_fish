@@ -109,10 +109,6 @@ class Shark(Agent):
 		if self.energy < 0:
 			self.model.remove_shark(self)
 
-	def show(self):
-		stroke(255)
-		rect(self.pos, self.energy, self.energy)
-
 	def step(self):
 		prey = self.seeable_prey()
 

@@ -120,11 +120,7 @@ class Fish(Agent):
 
         fixed_velocity = [comp * self.max_speed for comp in normalize(tuple(velocity))]
 
-        return fixed_velocity
-
-    def show(self):
-        stroke(255)
-        circle(self.pos,10)
+        return fixed_velocity        
 
     # Eat neighboring food and gain energy
     def eat(self):
@@ -149,19 +145,21 @@ class Fish(Agent):
         separation = self.separation()
         cohesion = self.cohesion()
 
-        v = 1
-        a = 1
-        s = 1
-        c = 1
-        b = 1
+        inertia_weight = 1
+        align_weight = 1
+        separation_weight = 1
+        cohesion_weight = 1
 
         neo_velocity = []
         for i in range(len(self.pos)):
-            component = v * self.velocity[i] + a * alignment[i] + s * separation[i] + c * cohesion[i]
+            component = sum([inertia_weight    * self.velocity[i],
+                             align_weight      * alignment[i],
+                             separation_weight * separation[i],
+                             cohesion_weight   * cohesion[i]])
 
             neo_velocity.append(component)
 
-        neo_velocity = self.boundary(neo_velocity, b)
+        neo_velocity = self.boundary(neo_velocity, 1)
         neo_velocity = self.limit_velocity(neo_velocity)
 
         neo_pos = [ self.pos[i] + neo_velocity[i] for i in range(len(self.pos)) ]
