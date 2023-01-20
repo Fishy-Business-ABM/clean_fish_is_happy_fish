@@ -1,29 +1,35 @@
 import enum
-from numpy import euler_gamma
-import model
-from p5 import stroke,circle
+from numpy import euler_gamma # what does this do ?
+from p5 import stroke,circle # what does this do ?
+from food import Food
+from model import Model
+from agent import Agent
 
 from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
 
-class Fish(object):
+class Fish(Agent):
     """docstring for Fish"""
     def __init__(
         self,
-        model: model.Model,
+        model: Model,
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
         max_speed: float,
+        metabolism: float,
+        energy: float,
+        eat_radius: float
     ):
-        super(Fish, self).__init__()
-
-        self.pos = pos
+        super(Fish, self).__init__(pos)
         self.perception = perception
         self.model = model
         self.model.add_entity(self)
         self.velocity = velocity
         self.max_speed = max_speed
+        self.metabolism = metabolism
+        self.energy = energy
+        self.eat_radius = eat_radius
 
     def boundary(self, velocity) -> List[float]:
         max_dist = 100
@@ -38,11 +44,11 @@ class Fish(object):
         return velocity
 
     def align(self) -> List[float]:
-        neighbors = self.model.get_neighbors(self, self.perception, False)
-
+        neighbors = self.neighbors
         alignment_strength = 0.05
         avg_vel = [float(0) for _ in self.pos]
-        align_update = [float(0) for _ in self.pos]
+        align_update = [float(0) for _ in self.pos]        
+        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return align_update
@@ -66,7 +72,8 @@ class Fish(object):
 
         min_dist = 20
 
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.neighbors
+        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return separation_update
@@ -87,7 +94,8 @@ class Fish(object):
 
         com = [float(0) for _ in self.pos]
 
-        neighbors = self.model.get_neighbors(self, self.perception, False)
+        neighbors = self.neighbors
+        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return cohesion_update
@@ -119,7 +127,25 @@ class Fish(object):
         stroke(255)
         circle(self.pos,10)
 
+    # Eat neighboring food and gain energy
+    def eat(self):
+        available_foods = self.model.get_neighboring_food(self, self.eat_radius)
+        
+        for food in available_foods:
+            self.energy += food.available_fraction
+            food.available_fraction = 0
+            self.model.regrowing_foods.add(food)
+    
+    # Do metabolism and possibly die
+    def metabolize(self):
+        self.energy -= self.metabolism
+
+        if self.energy < 0:
+            self.model.remove_entity(self)
+
     def step(self):
+        self.neighbors = self.model.get_neighbors(self, self.perception, False)
+
         alignment = self.align()
         separation = self.separation()
         cohesion = self.cohesion()
@@ -143,4 +169,5 @@ class Fish(object):
         self.velocity = tuple(neo_velocity)
         self.pos = tuple(neo_pos)
 
-
+        self.eat()
+        self.metabolize()
