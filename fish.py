@@ -1,5 +1,8 @@
+
+from food import Food
 from model import Model
 from agent import Agent
+
 from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
 
@@ -11,7 +14,10 @@ class Fish(Agent):
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
-        max_speed: float
+        max_speed: float,
+        metabolism: float,
+        energy: float,
+        eat_radius: float
     ):
         super(Fish, self).__init__(pos)
         self.perception = perception
@@ -19,9 +25,13 @@ class Fish(Agent):
         self.model.add_entity(self)
         self.velocity = velocity
         self.max_speed = max_speed
+        self.metabolism = metabolism
+        self.energy = energy
+        self.eat_radius = eat_radius
 
     def align(self) -> List[float]:
         neighbors = self.neighbors
+
         steering = [0 for _ in self.pos]
         if len(neighbors) == 0:
             return steering
@@ -75,6 +85,22 @@ class Fish(Agent):
 
         return steering
 
+    # Eat neighboring food and gain energy
+    def eat(self):
+        available_foods = self.model.get_neighbors(self, self.model.foods, self.eat_radius, False)
+        
+        for food in available_foods:
+            self.energy += food.available_fraction
+            food.available_fraction = 0
+            self.model.regrowing_foods.add(food)
+    
+    # Do metabolism and possibly die
+    def metabolize(self):
+        self.energy -= self.metabolism
+
+        if self.energy < 0:
+            self.model.remove_entity(self)
+
     def step(self):
         self.neighbors = self.model.get_neighbors(self, self.perception, False)
 
@@ -100,4 +126,5 @@ class Fish(Agent):
         self.velocity = tuple(neo_velocity)
         self.pos = tuple(neo_pos)
 
-
+        self.eat()
+        self.metabolize()
