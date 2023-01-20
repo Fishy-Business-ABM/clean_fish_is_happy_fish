@@ -30,7 +30,10 @@ class Shark(Agent):
 		perception: float,
 		nb_seeable_fish: int,
 		nb_deep_neurons: int,
-		weights: List[float]	
+		weights: List[float],
+		eat_radius: float,
+		energy: float,
+		metabolism: float	
 	):
 		super(Shark, self).__init__(pos)
 
@@ -38,6 +41,9 @@ class Shark(Agent):
 		self.model.add_entity(self)
 		self.perception = perception
 		self.nb_seeable_fish = nb_seeable_fish
+		self.eat_radius = eat_radius
+		self.energy = energy
+		self.metabolism = metabolism
 		
 		# now we create the brain, which is basically putting structure to the weigts		
 		nb_weight_per_deep_neuron = nb_seeable_fish * 2
@@ -64,12 +70,18 @@ class Shark(Agent):
 
 		self.brain = [deep_layer, out_layer]
 
-	def step(self):
-		neighbors = list(self.model.get_neighbors_w_distance(self, self.perception, False))
-		neighbors.sort(key=lambda x: x[1]) # sort them by who is closer
+	# Find bounded number of fish within perception
+	def seeable_prey(self):
+		prey = list(self.model.get_neighbors_w_distance(self, self.perception, False))
+		prey.sort(key=lambda x: x[1]) # sort them by who is closer
 
-		neighbors = neighbors[:self.nb_seeable_fish]
-		prey_positions = reduce(lambda acc, elm: acc + [elm[0].pos[0]] + [elm[0].pos[1]], neighbors, [])
+		prey = prey[:self.nb_seeable_fish]
+
+		return prey
+
+	# Move according to neural net
+	def move(self, prey):
+		prey_positions = reduce(lambda acc, elm: acc + [elm[0].pos[0]] + [elm[0].pos[1]], prey, [])
 		prey_positions += [0 for _ in range(2 * self.nb_seeable_fish - len(prey_positions))]
 
 		intermediary_outputs = [prey_positions]
@@ -82,3 +94,25 @@ class Shark(Agent):
 		new_y = self.pos[1] + norm * sin(angle)
 		self.pos = (new_x, new_y)
 
+	# Eat potential prey within eating radius
+	def eat(self, prey):
+		for fish,dist in prey:
+			if dist <= self.eat_radius:
+				self.energy += 1
+				self.model.remove_entity(fish)
+
+	# Do metabolism and possibly die
+	def metabolize(self):
+		self.energy -= self.metabolism
+
+		if self.energy < 0:
+			self.model.remove_entity(self)
+
+	def step(self):
+		prey = self.seeable_prey()
+
+		self.move(prey)
+		self.eat(prey)
+		self.metabolize()
+
+		

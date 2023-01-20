@@ -149,9 +149,56 @@ def naive_test_model_step():
         sea.step()
 
     print("PASSED NAIVE TEST MODEL STEP")
-    
 
-def naive_test_shark():
+def naive_test_shark_eat():
+    sea = Model(100, 100)
+    shark = Shark(
+        model=sea,
+        pos=(0, 0),
+        perception=1,
+        nb_seeable_fish=10,
+        nb_deep_neurons=0,
+        weights=list(range(36)),
+        eat_radius=1,
+        energy=0,
+        metabolism=0
+    )
+    sea.add_entity(shark)
+
+    fish = Fish(sea, (0.5, 0), 0, (0, 0), 0, 0, 0, 0)
+    sea.add_entity(fish)
+    prey = shark.seeable_prey()
+    shark.eat(prey)
+    assert len(sea.entities) == 1
+    assert 0.9999 < shark.energy and shark.energy < 1.0001
+
+    print("PASSED NAIVE TEST SHARK EAT")
+
+def naive_test_shark_metabolize():
+    sea = Model(100, 100)
+    shark = Shark(
+        model=sea,
+        pos=(0, 0),
+        perception=0,
+        nb_seeable_fish=10,
+        nb_deep_neurons=0,
+        weights=list(range(36)),
+        eat_radius=0,
+        energy=1,
+        metabolism=0.8
+    )
+    sea.add_entity(shark)
+
+    shark.metabolize()
+    assert len(sea.entities) == 1
+    assert 0.1999 < shark.energy and shark.energy < 0.2001
+
+    shark.metabolize()
+    assert len(sea.entities) == 0
+
+    print("PASSED NAIVE TEST SHARK METABOLIZE")
+
+def naive_test_shark_move():
     sea = Model(100, 100)
     sharky = Shark(
         model=sea,
@@ -159,7 +206,10 @@ def naive_test_shark():
         perception=10,
         nb_seeable_fish=5,
         nb_deep_neurons=3,
-        weights=list(range(36))
+        weights=list(range(36)),
+        eat_radius=0,
+        energy=1,
+        metabolism=0
     )
 
     assert isinstance(sharky.brain, List)
@@ -186,7 +236,7 @@ def naive_test_shark():
 
     sharky.step()
     assert sharky.pos == (23751.808899627933, 24411.78350705977)
-    print("PASSED NAIVE TEST SHARK")
+    print("PASSED NAIVE TEST SHARK MOVE")
 
 if __name__ == '__main__':
     naive_test_add_fish()
@@ -202,4 +252,6 @@ if __name__ == '__main__':
     naive_test_fish_metabolize()
     naive_test_model_step()
     # TODO: TEST STEP FOR REAL
-    naive_test_shark()
+    naive_test_shark_eat()
+    naive_test_shark_metabolize()
+    naive_test_shark_move()
