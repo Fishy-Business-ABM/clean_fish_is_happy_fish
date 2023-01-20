@@ -1,14 +1,16 @@
-import model
+
 from food import Food
+from model import Model
+from agent import Agent
 
 from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
 
-class Fish(object):
+class Fish(Agent):
     """docstring for Fish"""
     def __init__(
         self,
-        model: model.Model,
+        model: Model,
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
@@ -17,9 +19,7 @@ class Fish(object):
         energy: float,
         eat_radius: float
     ):
-        super(Fish, self).__init__()
-
-        self.pos = pos
+        super(Fish, self).__init__(pos)
         self.perception = perception
         self.model = model
         self.model.add_entity(self)
@@ -30,7 +30,8 @@ class Fish(object):
         self.eat_radius = eat_radius
 
     def align(self) -> List[float]:
-        neighbors = self.model.get_neighbors(self, self.model.entities, self.perception, False)
+        neighbors = self.neighbors
+
         steering = [0 for _ in self.pos]
         if len(neighbors) == 0:
             return steering
@@ -51,7 +52,7 @@ class Fish(object):
 
     def separation(self) -> List[float]:
         steering = [0 for _ in self.pos]
-        neighbors = self.model.get_neighbors(self, self.model.entities, self.perception, False)
+        neighbors = self.neighbors
 
         if len(neighbors) == 0:
             return steering
@@ -72,7 +73,7 @@ class Fish(object):
     
     def cohesion(self) -> List[float]:
         steering = [0 for _ in self.pos]
-        neighbors = self.model.get_neighbors(self, self.model.entities, self.perception, False)
+        neighbors = self.neighbors
 
         if len(neighbors) == 0:
             return steering
@@ -101,6 +102,8 @@ class Fish(object):
             self.model.remove_entity(self)
 
     def step(self):
+        self.neighbors = self.model.get_neighbors(self, self.perception, False)
+
         alignment = self.align()
         separation = self.separation()
         cohesion = self.cohesion()

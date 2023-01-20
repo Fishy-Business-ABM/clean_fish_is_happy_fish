@@ -1,7 +1,11 @@
 from model import Model
 from fish import Fish
+
 from food import Food
+from shark import Neuron, Shark
 from util import compute_norm, normalize
+from typing import Tuple, List
+
 import random
 import math
 
@@ -77,6 +81,7 @@ def naive_sanity_check_test_step():
     Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0).step()
     print("PASSED NAIVE SANITY CHECK TEST STEP")
 
+
 def naive_test_start_regrowing():
     sea = Model()
     food = Food(sea, (0,0), 1)
@@ -146,6 +151,41 @@ def naive_test_model_step():
     print("PASSED NAIVE TEST MODEL STEP")
     
 
+def naive_test_shark():
+    sea = Model()
+    sharky = Shark(
+        model=sea,
+        pos=(0, 0),
+        perception=10,
+        nb_seeable_fish=5,
+        nb_deep_neurons=3,
+        weights=list(range(36))
+    )
+
+    assert isinstance(sharky.brain, List)
+    assert len(sharky.brain) == 2
+    assert len(sharky.brain[0]) == 3
+    assert len(sharky.brain[1]) == 2
+
+    for i_deep in range(3):
+        for i in range(10):
+            assert isinstance(sharky.brain[0], List)
+            assert isinstance(sharky.brain[0][i_deep], Neuron)
+            assert sharky.brain[0][i_deep].weights[i] == 10 * i_deep + i
+
+    for i_out in range(2):
+        for i in range(3):
+            assert isinstance(sharky.brain[1], List)
+            assert isinstance(sharky.brain[1][i_out], Neuron)
+            assert sharky.brain[1][i_out].weights[i] == 30 + 3 * i_out + i
+
+    sharky.step()
+
+    for i in range(10):
+        Fish(sea, (i, i), 0, (0, 0), 0)
+
+    sharky.step()
+
 if __name__ == '__main__':
     naive_test_add_fish()
     naive_fuzzy_test_add_fish()
@@ -160,3 +200,4 @@ if __name__ == '__main__':
     naive_test_fish_metabolize()
     naive_test_model_step()
     # TODO: TEST STEP FOR REAL
+    naive_test_shark()
