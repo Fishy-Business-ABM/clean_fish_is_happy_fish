@@ -81,6 +81,16 @@ def naive_sanity_check_test_step():
     Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0).step()
     print("PASSED NAIVE SANITY CHECK TEST STEP")
 
+def naive_test_step():
+    sea = Model(100,100)
+    boid1 = Fish(sea,(1,0), 2, (1,0), 10, 0, 1, 0)
+    boid2 = Fish(sea,(0,0), 2, (0,0), 10, 0, 1, 0)
+    boid2.step()
+    assert boid2.pos[0] > 1.0049 and boid2.pos[0] < 1.0051
+    assert boid2.pos[1] > 0.9999 and boid2.pos[1] < 1.0001
+    print("PASSED NAIVE STEP TEST")
+
+
 
 def naive_test_start_regrowing():
     sea = Model(100, 100)
@@ -201,5 +211,7 @@ if __name__ == '__main__':
     naive_test_fish_eat()
     naive_test_fish_metabolize()
     naive_test_model_step()
+    naive_test_step()
     # TODO: TEST STEP FOR REAL
     naive_test_shark()
+

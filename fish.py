@@ -1,5 +1,4 @@
 import enum
-from numpy import euler_gamma # what does this do ?
 from p5 import stroke,circle # what does this do ?
 from food import Food
 from model import Model
@@ -48,7 +47,6 @@ class Fish(Agent):
         alignment_strength = 0.05
         avg_vel = [float(0) for _ in self.pos]
         align_update = [float(0) for _ in self.pos]        
-        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return align_update
@@ -65,7 +63,6 @@ class Fish(Agent):
         return align_update
 
 
-
     def separation(self) -> List[float]:
         separation_update = [float(0) for _ in self.pos]
         separation_strength = 0.05
@@ -73,7 +70,6 @@ class Fish(Agent):
         min_dist = 20
 
         neighbors = self.neighbors
-        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return separation_update
@@ -95,7 +91,6 @@ class Fish(Agent):
         com = [float(0) for _ in self.pos]
 
         neighbors = self.neighbors
-        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return cohesion_update
