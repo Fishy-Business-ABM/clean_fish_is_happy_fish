@@ -31,9 +31,8 @@ class Fish(Agent):
         self.energy = energy
         self.eat_radius = eat_radius
 
-    def boundary(self, velocity) -> List[float]:
-        max_dist = 100
-        boundary_strength = 1
+    def boundary(self, velocity, boundary_strength) -> List[float]:
+        max_dist = 0.1 * self.model.window[0]
 
         for i,pos in enumerate(self.pos):
             if pos < max_dist:
@@ -150,19 +149,20 @@ class Fish(Agent):
         separation = self.separation()
         cohesion = self.cohesion()
 
+        v = 1
+        a = 1
+        s = 1
+        c = 1
+        b = 1
+
         neo_velocity = []
         for i in range(len(self.pos)):
-            v = 1
-            a = 1
-            s = 1
-            c = 1
-
             component = v * self.velocity[i] + a * alignment[i] + s * separation[i] + c * cohesion[i]
 
             neo_velocity.append(component)
 
+        neo_velocity = self.boundary(neo_velocity, b)
         neo_velocity = self.limit_velocity(neo_velocity)
-        neo_velocity = self.boundary(neo_velocity)
 
         neo_pos = [ self.pos[i] + neo_velocity[i] for i in range(len(self.pos)) ]
 
