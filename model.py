@@ -5,6 +5,7 @@ class Model(object):
     def __init__(self,width,height):
         super(Model, self).__init__()
         self.entities = set()
+        self.sharks = set()
         self.window = (width,height)
         self.foods = set()
         self.regrowing_foods = set()
@@ -13,9 +14,15 @@ class Model(object):
         assert "pos" in entity.__dict__ and isinstance(entity.pos, tuple)
         self.entities.add(entity)
 
+    def add_shark(self, shark):
+        assert "pos" in shark.__dict__ and isinstance(shark.pos, tuple)
+        self.sharks.add(shark)
 
     def remove_entity(self, entity):
         self.entities.remove(entity)
+    
+    def remove_shark(self, shark):
+        self.sharks.remove(shark)
 
     def get_neighboring(self, entity, radius, is_entity_included, source):
         neighbors = set()

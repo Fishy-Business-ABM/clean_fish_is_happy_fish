@@ -3,6 +3,7 @@ from math import sin, cos
 from model import Model
 from agent import Agent
 from typing import Tuple, List
+from p5 import stroke, fill, rect
 
 class Neuron(object):
 	def __init__(
@@ -38,7 +39,7 @@ class Shark(Agent):
 		super(Shark, self).__init__(pos)
 
 		self.model = model
-		self.model.add_entity(self)
+		self.model.add_shark(self)
 		self.perception = perception
 		self.nb_seeable_fish = nb_seeable_fish
 		self.eat_radius = eat_radius
@@ -106,7 +107,11 @@ class Shark(Agent):
 		self.energy -= self.metabolism
 
 		if self.energy < 0:
-			self.model.remove_entity(self)
+			self.model.remove_shark(self)
+
+	def show(self):
+		stroke(255)
+		rect(self.pos, self.energy, self.energy)
 
 	def step(self):
 		prey = self.seeable_prey()
@@ -114,5 +119,3 @@ class Shark(Agent):
 		self.move(prey)
 		self.eat(prey)
 		self.metabolize()
-
-		
