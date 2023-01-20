@@ -30,6 +30,7 @@ class Fish(Agent):
         self.metabolism = metabolism
         self.energy = energy
         self.eat_radius = eat_radius
+        self.max_energy = 1
 
     def boundary(self, velocity, boundary_strength) -> List[float]:
         max_dist = 0.1 * self.model.window[0]
@@ -112,6 +113,36 @@ class Fish(Agent):
 
         return cohesion_update
 
+    def towards_food(self) -> List[float]:
+        towards_food_update = [float(0) for _ in self.pos]
+
+        hunger = 1 - self.energy / self.max_energy
+        # if self.energy > self.max_energy / 2:
+        #     return towards_food_update
+
+        visible_foods = self.model.get_neighboring(self, self.perception, False, self.model.foods)
+        if len(visible_foods) == 0:
+            return towards_food_update
+
+        count = len(visible_foods)
+        for food in visible_foods:
+            attraction = 1 - food[1]/self.perception
+            nutritional_value = food[0].available_fraction
+
+            for i in range(len(self.pos)):
+                if food[1] == 0:
+                    count -= 1
+                    continue
+                
+                direction = food[0].pos[i] - self.pos[i]
+                towards_food_update[i] = direction * nutritional_value * hunger * attraction
+        
+        for i in range(len(self.pos)):
+            towards_food_update[i] /= count
+        
+        return towards_food_update
+
+
     def limit_velocity(self, velocity) -> List[float]:
         vel_length = compute_norm(tuple(velocity))
 
@@ -124,12 +155,14 @@ class Fish(Agent):
 
     # Eat neighboring food and gain energy
     def eat(self):
-        available_foods = self.model.get_neighboring_food(self, self.eat_radius)
-        
-        for food in available_foods:
-            self.energy += food.available_fraction
-            food.available_fraction = 0
-            self.model.regrowing_foods.add(food)
+        if self.energy < self.max_energy:
+            available_foods = self.model.get_neighboring_food(self, self.eat_radius)
+            
+            for food in available_foods:
+                eat_fraction = min(food.available_fraction, self.max_energy - self.energy)
+                self.energy += eat_fraction
+                food.available_fraction -= eat_fraction
+                self.model.regrowing_foods.add(food)
     
     # Do metabolism and possibly die
     def metabolize(self):
@@ -144,18 +177,21 @@ class Fish(Agent):
         alignment = self.align()
         separation = self.separation()
         cohesion = self.cohesion()
+        towards_food = self.towards_food()
 
         inertia_weight = 1
         align_weight = 1
         separation_weight = 1
         cohesion_weight = 1
+        towards_food_weight = 5
 
         neo_velocity = []
         for i in range(len(self.pos)):
-            component = sum([inertia_weight    * self.velocity[i],
-                             align_weight      * alignment[i],
-                             separation_weight * separation[i],
-                             cohesion_weight   * cohesion[i]])
+            component = sum([inertia_weight      * self.velocity[i],
+                             align_weight        * alignment[i],
+                             separation_weight   * separation[i],
+                             cohesion_weight     * cohesion[i],
+                             towards_food_weight * towards_food[i]])
 
             neo_velocity.append(component)
 
