@@ -87,7 +87,7 @@ class Fish(Agent):
 
     # Eat neighboring food and gain energy
     def eat(self):
-        available_foods = self.model.get_neighbors(self, self.model.foods, self.eat_radius, False)
+        available_foods = self.model.get_neighboring_food(self, self.eat_radius)
         
         for food in available_foods:
             self.energy += food.available_fraction

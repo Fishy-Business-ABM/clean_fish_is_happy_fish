@@ -36,19 +36,19 @@ def naive_test_get_neighbor():
     for _ in range(n_fish):
         Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
     
-    assert len(sea.get_neighbors(base_fish, sea.entities, 0, True)) == n_fish + 1 
-    assert len(sea.get_neighbors(base_fish, sea.entities, 0, False)) == n_fish
+    assert len(sea.get_neighbors(base_fish, 0, True)) == n_fish + 1 
+    assert len(sea.get_neighbors(base_fish, 0, False)) == n_fish
     
     Fish(sea, (0, 1), 0, (0, 0), 0, 0, 0, 0)
     Fish(sea, (1, 0), 0, (0, 0), 0, 0, 0, 0)
-    assert len(sea.get_neighbors(base_fish, sea.entities, 0, True)) == n_fish + 1
-    assert len(sea.get_neighbors(base_fish, sea.entities, 0, False)) == n_fish
-    assert len(sea.get_neighbors(base_fish, sea.entities, 1, True)) == n_fish + 1 + 2
-    assert len(sea.get_neighbors(base_fish, sea.entities, 1, False)) == n_fish + 2
+    assert len(sea.get_neighbors(base_fish, 0, True)) == n_fish + 1
+    assert len(sea.get_neighbors(base_fish, 0, False)) == n_fish
+    assert len(sea.get_neighbors(base_fish, 1, True)) == n_fish + 1 + 2
+    assert len(sea.get_neighbors(base_fish, 1, False)) == n_fish + 2
 
-    assert len(sea.get_neighbors(base_fish, sea.foods, 1, False)) == 0
+    assert len(sea.get_neighboring_food(base_fish, 1)) == 0
     Food(sea, (0,0), 1)
-    assert len(sea.get_neighbors(base_fish, sea.foods, 1, False)) == 1
+    assert len(sea.get_neighboring_food(base_fish, 1)) == 1
 
     print("PASSED NAIVE FUZZY TEST GET NEIGHBOR")
 
@@ -182,7 +182,7 @@ def naive_test_shark():
     sharky.step()
 
     for i in range(10):
-        Fish(sea, (i, i), 0, (0, 0), 0)
+        Fish(sea, (i, i), 0, (0, 0), 0, 0, 0, 0)
 
     sharky.step()
 

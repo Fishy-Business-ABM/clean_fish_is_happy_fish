@@ -16,19 +16,28 @@ class Model(object):
     def remove_entity(self, entity):
         self.entities.remove(entity)
 
+    def get_neighboring(self, entity, radius, is_entity_included, source):
+        neighbors = set()
+        for potential_neighbor in source:
+            if not is_entity_included and potential_neighbor == entity:
+                continue
+            dist = euclidian_distance(entity.pos, potential_neighbor.pos)
+            if radius >= dist:
+                neighbors.add((potential_neighbor, dist))
+        return neighbors
+
+    def get_neighboring_food(self, entity, radius):
+        food_set = self.get_neighboring(entity, radius, False, self.foods)
+        return [x[0] for x in food_set]
+
+
     def get_neighbors(self, entity, radius, is_entity_included):
         neighbors_w_dist = self.get_neighbors_w_distance(entity, radius, is_entity_included)
         neighbors = [x[0] for x in neighbors_w_dist]
         return neighbors
 
     def get_neighbors_w_distance(self, entity, radius, is_entity_included):
-        neighbors = set()
-        for potential_neighbor in source:
-            if not is_entity_included and potential_neighbor == entity:
-                continue
-            if radius >= euclidian_distance(entity.pos, potential_neighbor.pos):
-                neighbors.add(potential_neighbor)
-        return neighbors
+        return self.get_neighboring(entity, radius, is_entity_included, self.entities)
 
     def add_food(self, food):
         assert "pos" in food.__dict__ and isinstance(food.pos, tuple)
