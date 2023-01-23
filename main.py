@@ -279,10 +279,10 @@ def naive_test_remove_shark():
 
 def naive_test_towards_food():
     sea = Model(100,100)
-    fish = Fish(sea, (1,1), 10, (0,0), 10, 0, 0, 0)
+    fish = Fish(sea, (1,1), 10, (0,0), 10, 0, 0.5, 0)
     food = Food(sea, (3,1), 0)
     food.available_fraction = 0.5
-    assert fish.towards_food() == [1,0]
+    assert fish.towards_food() == [0.4,0]
     print("PASSED NAIVE TEST TOWARDS FOOD")
 
 if __name__ == '__main__':
