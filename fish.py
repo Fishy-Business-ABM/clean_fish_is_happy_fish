@@ -16,8 +16,8 @@ class Fish(Agent):
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
-        max_speed: float,
-        metabolism: float,
+        mass: float,
+        metaolism: float, # TODO: metabolism now superfluous because of introduction of mass!
         energy: float,
         eat_radius: float
     ):
@@ -26,11 +26,14 @@ class Fish(Agent):
         self.model = model
         self.model.add_entity(self)
         self.velocity = velocity
-        self.max_speed = max_speed
-        self.metabolism = metabolism
+        self.mass = mass
         self.energy = energy
         self.eat_radius = eat_radius
         self.max_energy = 1
+
+        # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
+        # is related to the max speed of a fish, TODO: decide on precise relationship
+        self.max_speed = 100000 * self.mass
 
     def boundary(self, velocity, boundary_strength) -> List[float]:
         max_dist = 0.1 * self.model.window[0]
@@ -186,7 +189,7 @@ class Fish(Agent):
     
     # Do metabolism and possibly die
     def metabolize(self):
-        self.energy -= self.metabolism
+        self.energy -= self.mass * compute_norm(self.velocity) ** 2
 
         if self.energy < 0:
             self.model.remove_entity(self)

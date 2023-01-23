@@ -24,7 +24,7 @@ for w in range(round(5*width/8),round(3*width/4),50):
 for _ in range(n_fish):
     pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
     vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
-    fish = Fish(sea, pos, perception, vel, 10, 0.001, 1, 15)
+    fish = Fish(sea, pos, perception, vel, 0.0001, 0.001, 1, 15)
 
 '''
 Shark(model=sea,
