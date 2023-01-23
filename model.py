@@ -64,7 +64,10 @@ class Model(object):
         '''
         regrowing_foods_copy = copy(self.regrowing_foods)
         entities_copy = copy(self.entities)
+        sharks_copy = copy(self.sharks)
         for food in regrowing_foods_copy:
             food.step()
         for entity in entities_copy:
             entity.step()
+        for shark in sharks_copy:
+            shark.step()
