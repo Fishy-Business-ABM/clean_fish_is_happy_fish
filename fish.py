@@ -17,7 +17,7 @@ class Fish(Agent):
         perception: float,
         velocity: Tuple[float],
         mass: float,
-        metaolism: float, # TODO: metabolism now superfluous because of introduction of mass!
+        metabolism: float, # TODO: metabolism now superfluous because of introduction of mass!
         energy: float,
         eat_radius: float
     ):
