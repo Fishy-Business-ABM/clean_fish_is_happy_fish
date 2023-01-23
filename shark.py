@@ -4,6 +4,7 @@ from model import Model
 from agent import Agent
 from typing import Tuple, List
 from p5 import stroke, fill, rect
+from util import compute_norm
 
 class Neuron(object):
 	def __init__(
@@ -34,7 +35,7 @@ class Shark(Agent):
 		weights: List[float],
 		eat_radius: float,
 		energy: float,
-		metabolism: float	
+		mass: float	
 	):
 		super(Shark, self).__init__(pos)
 
@@ -44,7 +45,12 @@ class Shark(Agent):
 		self.nb_seeable_fish = nb_seeable_fish
 		self.eat_radius = eat_radius
 		self.energy = energy
-		self.metabolism = metabolism
+		self.mass = mass
+		self.speed = 0
+
+		# Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
+        # is related to the max speed of a fish, TODO: decide on precise relationship
+		self.max_speed = 10 * self.mass
 		
 		# now we create the brain, which is basically putting structure to the weigts		
 		nb_weight_per_deep_neuron = nb_seeable_fish * 2
@@ -91,8 +97,12 @@ class Shark(Agent):
 			intermediary_outputs.append(intermediary)
 
 		angle, norm = intermediary_outputs[-1][0], intermediary_outputs[-1][1]
+		if norm > self.max_speed:
+			norm = self.max_speed
+			self.speed = norm
 		new_x = self.pos[0] + norm * cos(angle)
 		new_y = self.pos[1] + norm * sin(angle)
+
 		self.pos = (new_x, new_y)
 
 	# Eat potential prey within eating radius
@@ -104,7 +114,7 @@ class Shark(Agent):
 
 	# Do metabolism and possibly die
 	def metabolize(self):
-		self.energy -= self.metabolism
+		self.energy -= self.mass * self.speed ** 2
 
 		if self.energy < 0:
 			self.model.remove_shark(self)

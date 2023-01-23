@@ -132,11 +132,11 @@ def naive_test_fish_eat():
 
 def naive_test_fish_metabolize():
     sea = Model(100, 100)
-    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0.8, 1, 0)
+    fish = Fish(sea, (0, 0), 0, (0.8, 0), 1, 0.8, 1, 0)
 
     fish.metabolize()
     assert len(sea.entities) == 1
-    assert 0.1999 < fish.energy and fish.energy < 0.2001
+    assert 0.3599 < fish.energy and fish.energy < 0.3601
 
     fish.metabolize()
     assert len(sea.entities) == 0
@@ -168,7 +168,7 @@ def naive_test_shark_eat():
         weights=list(range(36)),
         eat_radius=1,
         energy=0,
-        metabolism=0
+        mass=0
     )
     sea.add_shark(shark)
 
@@ -192,13 +192,13 @@ def naive_test_shark_metabolize():
         weights=list(range(36)),
         eat_radius=0,
         energy=1,
-        metabolism=0.8
+        mass=1
     )
-    sea.add_shark(shark)
+    shark.speed = 0.8
 
     shark.metabolize()
     assert len(sea.sharks) == 1
-    assert 0.1999 < shark.energy and shark.energy < 0.2001
+    assert 0.3599 < shark.energy and shark.energy < 0.3601
 
     shark.metabolize()
     assert len(sea.sharks) == 0
@@ -216,7 +216,7 @@ def naive_test_shark_move():
         weights=list(range(36)),
         eat_radius=0,
         energy=1,
-        metabolism=0
+        mass=1
     )
 
     assert isinstance(sharky.brain, List)
@@ -241,6 +241,7 @@ def naive_test_shark_move():
     for i in range(10):
         Fish(sea, (i, i), 0, (0, 0), 0, 0, 0, 0)
 
+    sharky.max_speed = 10000000
     sharky.step()
     assert sharky.pos == (23751.808899627933, 24411.78350705977)
     print("PASSED NAIVE TEST SHARK MOVE")
@@ -257,7 +258,7 @@ def naive_fuzzy_test_add_shark():
               weights=[],
               eat_radius=0,
               energy=0,
-              metabolism=0)
+              mass=0)
     assert len(sea.sharks) == n_sharks
     print("PASSED NAIVE FUZZY TEST ADD SHARK")
 
@@ -271,7 +272,7 @@ def naive_test_remove_shark():
                   weights=[],
                   eat_radius=0,
                   energy=0,
-                  metabolism=0)
+                  mass=0)
     assert len(sea.sharks) == 1
     shark.model.remove_shark(shark)
     assert len(sea.sharks) == 0
@@ -304,7 +305,7 @@ def naive_test_avoid_shark():
           weights=[],
           eat_radius=0,
           energy=0,
-          metabolism=0)
+          mass=0)
     assert fish.avoid_shark() == [-1,0]
 
     Shark(model=sea,
@@ -315,7 +316,7 @@ def naive_test_avoid_shark():
           weights=[],
           eat_radius=0,
           energy=0,
-          metabolism=0)
+          mass=0)
     assert fish.avoid_shark() == [0,0]
     print("PASSED NAIVE TEST AVOID SHARK")
 
