@@ -135,13 +135,33 @@ class Fish(Agent):
                     continue
                 
                 direction = food[0].pos[i] - self.pos[i]
-                towards_food_update[i] = direction * nutritional_value * hunger * attraction
+                towards_food_update[i] += direction * nutritional_value * hunger * attraction
         
         for i in range(len(self.pos)):
             towards_food_update[i] /= count
         
         return towards_food_update
 
+    def avoid_shark(self) -> List[float]:
+        avoid_shark_update = [float(0) for _ in self.pos]
+
+        visible_sharks = self.model.get_neighboring(self, self.perception, False, self.model.sharks)
+        if len(visible_sharks) == 0:
+            return avoid_shark_update
+
+        count = len(visible_sharks)
+        for shark in visible_sharks:
+            if shark[1] == 0:
+                count -= 1
+                continue
+
+            for i in range(len(self.pos)):
+                avoid_shark_update[i] += (self.pos[i] - shark[0].pos[i]) / shark[1]
+        
+        for i in range(len(self.pos)):
+            avoid_shark_update[i] /= count
+        
+        return avoid_shark_update
 
     def limit_velocity(self, velocity) -> List[float]:
         vel_length = compute_norm(tuple(velocity))

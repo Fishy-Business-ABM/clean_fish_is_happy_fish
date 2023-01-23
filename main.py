@@ -283,7 +283,41 @@ def naive_test_towards_food():
     food = Food(sea, (3,1), 0)
     food.available_fraction = 0.5
     assert fish.towards_food() == [0.4,0]
+
+    food = Food(sea, (-1,1), 0)
+    food.available_fraction = 0.5
+    assert fish.towards_food() == [0,0]
+
+    food = Food(sea, (1,3), 0)
+    food.available_fraction = 0.5
+    assert fish.towards_food() == [0,0.4/3]
     print("PASSED NAIVE TEST TOWARDS FOOD")
+
+def naive_test_avoid_shark():
+    sea = Model(100,100)
+    fish = Fish(sea, (0,0), 2, (0,0), 0, 0, 0, 0)
+    Shark(model=sea,
+          pos=(1,0),
+          perception=0,
+          nb_seeable_fish=0,
+          nb_deep_neurons=0,
+          weights=[],
+          eat_radius=0,
+          energy=0,
+          metabolism=0)
+    assert fish.avoid_shark() == [-1,0]
+
+    Shark(model=sea,
+          pos=(-1,0),
+          perception=0,
+          nb_seeable_fish=0,
+          nb_deep_neurons=0,
+          weights=[],
+          eat_radius=0,
+          energy=0,
+          metabolism=0)
+    assert fish.avoid_shark() == [0,0]
+    print("PASSED NAIVE TEST AVOID SHARK")
 
 if __name__ == '__main__':
     naive_test_add_fish()
@@ -306,3 +340,4 @@ if __name__ == '__main__':
     naive_fuzzy_test_add_shark()
     naive_test_remove_shark()
     naive_test_towards_food()
+    naive_test_avoid_shark()
