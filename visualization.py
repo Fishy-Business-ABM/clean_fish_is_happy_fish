@@ -35,7 +35,7 @@ Shark(model=sea,
       weights=range(36),
       eat_radius=100,
       energy=20,
-      metabolism=0.2)
+      mass=0.2)
 '''
 Shark(model=sea,
       pos=(0.7 * width, 0.7 * height),
@@ -45,7 +45,7 @@ Shark(model=sea,
       weights=range(36),
       eat_radius=100,
       energy=20,
-      metabolism=0.2)
+      mass=0.2)
 
 
 def setup():
