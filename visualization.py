@@ -27,26 +27,26 @@ for _ in range(n_fish):
     fish = Fish(sea, pos, perception, vel, 10, 0.001, 1, 15)
 
 '''
-shark = Shark(model=sea,
-              pos=(0.7 * width, 0.3 * height),
-              perception=60,
-              nb_seeable_fish=5,
-              nb_deep_neurons=1,
-              weights=range(36),
-              eat_radius=100,
-              energy=20,
-              metabolism=0.2)
-
-shark = Shark(model=sea,
-              pos=(0.3 * width, 0.7 * height),
-              perception=60,
-              nb_seeable_fish=5,
-              nb_deep_neurons=1,
-              weights=range(36),
-              eat_radius=100,
-              energy=20,
-              metabolism=0.2)
+Shark(model=sea,
+      pos=(0.7 * width, 0.3 * height),
+      perception=60,
+      nb_seeable_fish=5,
+      nb_deep_neurons=1,
+      weights=range(36),
+      eat_radius=100,
+      energy=20,
+      metabolism=0.2)
 '''
+Shark(model=sea,
+      pos=(0.7 * width, 0.7 * height),
+      perception=60,
+      nb_seeable_fish=5,
+      nb_deep_neurons=1,
+      weights=range(36),
+      eat_radius=100,
+      energy=20,
+      metabolism=0.2)
+
 
 def setup():
     size(width, height)

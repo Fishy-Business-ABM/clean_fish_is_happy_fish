@@ -198,12 +198,14 @@ class Fish(Agent):
         separation = self.separation()
         cohesion = self.cohesion()
         towards_food = self.towards_food()
+        avoid_shark = self.avoid_shark()
 
         inertia_weight = 1
         align_weight = 1
         separation_weight = 1
         cohesion_weight = 1
         towards_food_weight = 5
+        avoid_shark_weight = 2
 
         neo_velocity = []
         for i in range(len(self.pos)):
@@ -211,7 +213,8 @@ class Fish(Agent):
                              align_weight        * alignment[i],
                              separation_weight   * separation[i],
                              cohesion_weight     * cohesion[i],
-                             towards_food_weight * towards_food[i]])
+                             towards_food_weight * towards_food[i],
+                             avoid_shark_weight  * avoid_shark[i]])
 
             neo_velocity.append(component)
 
