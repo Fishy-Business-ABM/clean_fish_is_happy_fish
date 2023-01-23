@@ -67,8 +67,6 @@ class Fish(Agent):
 
         return align_update
 
-
-
     def separation(self) -> List[float]:
         separation_update = [float(0) for _ in self.pos]
         separation_strength = 0.05
