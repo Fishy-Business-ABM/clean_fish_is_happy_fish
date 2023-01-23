@@ -54,6 +54,7 @@ class Model(object):
     def start_regrowing(self, food):
         assert "pos" in food.__dict__ and isinstance(food.pos, tuple)
         self.regrowing_foods.add(food)
+
     
     def step(self):
         '''

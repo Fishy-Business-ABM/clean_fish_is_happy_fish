@@ -9,9 +9,12 @@ from typing import Tuple, List
 import random
 import math
 
+test_genes = [0.,0.,0.,0.]
+test_genes2 = [1.,1.,1.,1.]
+
 def naive_test_add_fish():
     sea = Model(100, 100)
-    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
+    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     assert len(sea.entities) == 1
     print("PASSED NAIVE TEST ADD FISH")
 
@@ -19,13 +22,13 @@ def naive_fuzzy_test_add_fish():
     sea = Model(100, 100)
     n_fish = random.randint(1, 1000)
     for _ in range(n_fish):
-        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
+        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     assert len(sea.entities) == n_fish
     print("PASSED NAIVE FUZZY TEST ADD FISH")
 
 def naive_test_remove_fish():
     sea = Model(100,100)
-    fish = Fish(sea, (0,0), 0, (0,0), 0, 0, 0, 0)
+    fish = Fish(sea, (0,0), 0, (0,0), 0, 0, 0, 0,test_genes)
     fish.model.remove_entity(fish)
     assert len(sea.entities) == 0
     print("PASSED NAIVE TEST REMOVE FISH")
@@ -39,15 +42,15 @@ def naive_test_add_food():
 def naive_test_get_neighbor():
     sea = Model(100, 100)
     n_fish = random.randint(1, 1000)
-    base_fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
+    base_fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     for _ in range(n_fish):
-        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
+        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     
     assert len(sea.get_neighbors(base_fish, 0, True)) == n_fish + 1 
     assert len(sea.get_neighbors(base_fish, 0, False)) == n_fish
     
-    Fish(sea, (0, 1), 0, (0, 0), 0, 0, 0, 0)
-    Fish(sea, (1, 0), 0, (0, 0), 0, 0, 0, 0)
+    Fish(sea, (0, 1), 0, (0, 0), 0, 0, 0, 0,test_genes)
+    Fish(sea, (1, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     assert len(sea.get_neighbors(base_fish, 0, True)) == n_fish + 1
     assert len(sea.get_neighbors(base_fish, 0, False)) == n_fish
     assert len(sea.get_neighbors(base_fish, 1, True)) == n_fish + 1 + 2
@@ -80,12 +83,12 @@ def naive_fuzzy_test_normalize():
 
 def naive_sanity_check_test_step():
     sea = Model(100, 100)
-    Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0).step()
-    Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0).step()
-    Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0).step()
-    Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0).step()
-    Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0).step()
-    Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0).step()
+    Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0,test_genes).step()
+    Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0,test_genes).step()
+    Fish(sea, (0, 0), 2, (0, 0), 10, 0, 0, 0,test_genes).step()
+    Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0,test_genes).step()
+    Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0,test_genes).step()
+    Fish(sea, (1, 1), 2, (0, 0), 10, 0, 0, 0,test_genes).step()
     print("PASSED NAIVE SANITY CHECK TEST STEP")
 
 
@@ -115,7 +118,7 @@ def naive_test_fish_eat():
     sea = Model(100, 100)
     food = Food(sea, (0,0), 0.5)
     sea.add_food(food)
-    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0)
+    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
 
     fish.eat()
     assert food.available_fraction == 0
@@ -132,7 +135,7 @@ def naive_test_fish_eat():
 
 def naive_test_fish_metabolize():
     sea = Model(100, 100)
-    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0.8, 1, 0)
+    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0.8, 1, 0,test_genes)
 
     fish.metabolize()
     assert len(sea.entities) == 1
@@ -146,7 +149,7 @@ def naive_test_fish_metabolize():
 def naive_test_model_step():
     sea = Model(100, 100)
 
-    fish = Fish(sea, (0,0), 1, (1,0), 1, 0.5, 1, 1)
+    fish = Fish(sea, (0,0), 1, (1,0), 1, 0.5, 1, 1,test_genes)
     sea.add_entity(fish)
 
     food = Food(sea, (0.5, 0), 0.5)
@@ -172,7 +175,7 @@ def naive_test_shark_eat():
     )
     sea.add_shark(shark)
 
-    fish = Fish(sea, (0.5, 0), 0, (0, 0), 0, 0, 0, 0)
+    fish = Fish(sea, (0.5, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     sea.add_entity(fish)
     prey = shark.seeable_prey()
     shark.eat(prey)
@@ -239,7 +242,7 @@ def naive_test_shark_move():
     sharky.step()
     assert sharky.pos == (0, 0)
     for i in range(10):
-        Fish(sea, (i, i), 0, (0, 0), 0, 0, 0, 0)
+        Fish(sea, (i, i), 0, (0, 0), 0, 0, 0, 0,test_genes)
 
     sharky.step()
     assert sharky.pos == (23751.808899627933, 24411.78350705977)
@@ -279,11 +282,20 @@ def naive_test_remove_shark():
 
 def naive_test_towards_food():
     sea = Model(100,100)
-    fish = Fish(sea, (1,1), 10, (0,0), 10, 0, 0, 0)
+    fish = Fish(sea, (1,1), 10, (0,0), 10, 0, 0, 0,test_genes)
     food = Food(sea, (3,1), 0)
     food.available_fraction = 0.5
     assert fish.towards_food() == [1,0]
     print("PASSED NAIVE TEST TOWARDS FOOD")
+
+def naive_test_reproduce():
+    sea = Model(100,100)
+    fish1 = Fish(sea, (1,1), 10, (0,0), 10, 0, 0, 0,test_genes)
+    fish2 = Fish(sea, (1,1), 10, (0,0), 10, 0, 0, 0,test_genes2)
+
+    fish1.reproduce()
+    assert len(sea.entities) == 3
+    print("PASSED NAIVE REPRODUCTION TEST")
 
 if __name__ == '__main__':
     naive_test_add_fish()
@@ -296,9 +308,9 @@ if __name__ == '__main__':
     naive_test_add_food()
     naive_test_start_regrowing()
     naive_fuzzy_test_regrow()
-    naive_test_fish_eat()
     naive_test_fish_metabolize()
     naive_test_model_step()
+    naive_test_reproduce()
     # TODO: TEST STEP FOR REAL
     naive_test_shark_eat()
     naive_test_shark_metabolize()
@@ -306,3 +318,4 @@ if __name__ == '__main__':
     naive_fuzzy_test_add_shark()
     naive_test_remove_shark()
     naive_test_towards_food()
+    naive_test_fish_eat()
