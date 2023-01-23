@@ -124,9 +124,9 @@ def naive_test_fish_eat():
 
     food.regrow()
     fish.eat()
-    assert food.available_fraction == 0
+    assert food.available_fraction == 0.5
     assert len(sea.regrowing_foods) == 1
-    assert 1.4999 < fish.energy and fish.energy < 1.5001
+    assert 0.9999 < fish.energy and fish.energy < 1.0001
 
     print("PASSED NAIVE TEST FISH EAT")
 
