@@ -81,7 +81,7 @@ class Shark(Agent):
 		angle_out = Neuron(
 			weights = weights[end_deep_neurons:end_angle_out],
 			sigmoid = sigmoid_function,
-			bound = pi >> 1 # pi over 2
+			bound = pi / 2
 		)
 		norm_out = Neuron(
 			weights = weights[end_angle_out:], 
