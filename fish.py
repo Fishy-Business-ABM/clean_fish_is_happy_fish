@@ -241,7 +241,7 @@ class Fish(Agent):
                              self.align_weight        * alignment[i],
                              self.separation_weight   * separation[i],
                              self.cohesion_weight     * cohesion[i], # Note from Mehdi: chose to keep the self. from fish reproduction
-                             towards_food_weight * towards_food[i]]) # because they are from genes, but then it is weird
+                             towards_food_weight * towards_food[i], # because they are from genes, but then it is weird
                              avoid_shark_weight  * avoid_shark[i]])  # that towards_food_weight and avoid_shark_weight aren't genes
 
             neo_velocity.append(component)

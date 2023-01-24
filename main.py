@@ -14,7 +14,7 @@ test_genes2 = [1.,1.,1.,1.]
 
 def naive_test_add_fish():
     sea = Model(100, 100)
-    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0,test_genes)
+    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     assert len(sea.entities) == 1
     print("PASSED NAIVE TEST ADD FISH")
 
@@ -22,13 +22,13 @@ def naive_fuzzy_test_add_fish():
     sea = Model(100, 100)
     n_fish = random.randint(1, 1000)
     for _ in range(n_fish):
-        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0,test_genes)
+        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     assert len(sea.entities) == n_fish
     print("PASSED NAIVE FUZZY TEST ADD FISH")
 
 def naive_test_remove_fish():
     sea = Model(100,100)
-    fish = Fish(sea, (0,0), 0, (0,0), 0, 0, 0,test_genes)
+    fish = Fish(sea, (0,0), 0, (0,0), 0, 0, 0, 0, test_genes)
     fish.model.remove_entity(fish)
     assert len(sea.entities) == 0
     print("PASSED NAIVE TEST REMOVE FISH")
@@ -42,15 +42,15 @@ def naive_test_add_food():
 def naive_test_get_neighbor():
     sea = Model(100, 100)
     n_fish = random.randint(1, 1000)
-    base_fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0,test_genes)
+    base_fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     for _ in range(n_fish):
-        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0,test_genes)
+        Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
     
     assert len(sea.get_neighbors(base_fish, 0, True)) == n_fish + 1 
     assert len(sea.get_neighbors(base_fish, 0, False)) == n_fish
     
-    Fish(sea, (0, 1), 0, (0, 0), 0, 0, 0,test_genes)
-    Fish(sea, (1, 0), 0, (0, 0), 0, 0, 0,test_genes)
+    Fish(sea, (0, 1), 0, (0, 0), 0, 0, 0, 0, test_genes)
+    Fish(sea, (1, 0), 0, (0, 0), 0, 0, 0, 0, test_genes)
     assert len(sea.get_neighbors(base_fish, 0, True)) == n_fish + 1
     assert len(sea.get_neighbors(base_fish, 0, False)) == n_fish
     assert len(sea.get_neighbors(base_fish, 1, True)) == n_fish + 1 + 2
@@ -83,12 +83,12 @@ def naive_fuzzy_test_normalize():
 
 def naive_sanity_check_test_step():
     sea = Model(100, 100)
-    Fish(sea, (0, 0), 2, (0, 0), 0, 0, 0,test_genes).step()
-    Fish(sea, (0, 0), 2, (0, 0),  0, 0, 0,test_genes).step()
-    Fish(sea, (0, 0), 2, (0, 0),  0, 0, 0,test_genes).step()
-    Fish(sea, (1, 1), 2, (0, 0),  0, 0, 0,test_genes).step()
-    Fish(sea, (1, 1), 2, (0, 0),  0, 0, 0,test_genes).step()
-    Fish(sea, (1, 1), 2, (0, 0),  0, 0, 0,test_genes).step()
+    Fish(sea, (0, 0), 2, (0, 0),  0, 0, 0, 0, test_genes).step()
+    Fish(sea, (0, 0), 2, (0, 0),  0, 0, 0, 0, test_genes).step()
+    Fish(sea, (0, 0), 2, (0, 0),  0, 0, 0, 0, test_genes).step()
+    Fish(sea, (1, 1), 2, (0, 0),  0, 0, 0, 0, test_genes).step()
+    Fish(sea, (1, 1), 2, (0, 0),  0, 0, 0, 0, test_genes).step()
+    Fish(sea, (1, 1), 2, (0, 0),  0, 0, 0, 0, test_genes).step()
     print("PASSED NAIVE SANITY CHECK TEST STEP")
 
 
@@ -118,7 +118,7 @@ def naive_test_fish_eat():
     sea = Model(100, 100)
     food = Food(sea, (0,0), 0.5)
     sea.add_food(food)
-    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0,test_genes)
+    fish = Fish(sea, (0, 0), 0, (0, 0), 0, 0, 0, 0,test_genes)
 
     fish.eat()
     assert food.available_fraction == 0
@@ -135,7 +135,17 @@ def naive_test_fish_eat():
 
 def naive_test_fish_metabolize():
     sea = Model(100, 100)
-    fish = Fish(sea, (0, 0), 0, (0, 0), 0.8, 1, 0,test_genes)
+    fish = Fish(
+        model=sea,
+        pos=(0, 0),
+        perception=0,
+        velocity=(0, 0),
+        mass=0.8,
+        metabolism=0.8,
+        energy=1, 
+        eat_radius=0,
+        genes=test_genes
+    )
 
     fish.metabolize()
     assert len(sea.entities) == 1
