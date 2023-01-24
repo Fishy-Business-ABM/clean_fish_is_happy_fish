@@ -1,5 +1,5 @@
 from functools import reduce
-from math import sin, cos, exp
+from math import sin, cos, exp, pi
 from model import Model
 from agent import Agent
 from typing import Tuple, List
@@ -10,14 +10,19 @@ class Neuron(object):
 	def __init__(
 		self,
 		weights,
-		sigmoid # the normalization function used
+		sigmoid, # the normalization function used
+		bound
 	):
 		super(Neuron, self).__init__()
 		self.weights = weights
 		self.sigmoid = sigmoid
+		self.bound = bound
 
 	def __call__(self, input_data):
-		return self.sigmoid(sum([self.weights[i] * input_data[i] for i in range(len(self.weights))]))
+		return self.sigmoid(
+			self.bound,
+			sum([self.weights[i] * input_data[i] for i in range(len(self.weights))])
+		)
 
 	def __str__(self):
 		return str(self.weights)
@@ -60,8 +65,9 @@ class Shark(Agent):
 
 		deep_layer = [
 			Neuron(
-				weights[i * nb_weight_per_deep_neuron: (i + 1) *nb_weight_per_deep_neuron],
-				sigmoid_function
+				weights = weights[i * nb_weight_per_deep_neuron: (i + 1) *nb_weight_per_deep_neuron],
+				sigmoid = sigmoid_function,
+				bound = 1
 			)
 			for i in range(nb_deep_neurons)
 		]
@@ -72,12 +78,20 @@ class Shark(Agent):
 		# maybe make a better sigmoid for the output if we notice gradient explosions?
 		# also, for the angle output, we want to restrain that
 		# for the norm out, we also want to restrain that, so there a sigmoid is needed
-		angle_out = Neuron(weights[end_deep_neurons:end_angle_out], sigmoid_function)
-		norm_out = Neuron(weights[end_angle_out:], sigmoid_function)
+		angle_out = Neuron(
+			weights = weights[end_deep_neurons:end_angle_out],
+			sigmoid = sigmoid_function,
+			bound = pi >> 1 # pi over 2
+		)
+		norm_out = Neuron(
+			weights = weights[end_angle_out:], 
+			sigmoid = sigmoid_function,
+			bound = self.max_speed
+		)
 
 		out_layer = [angle_out, norm_out]
 
-		self.brain = [deep_layer, out_layer]
+		self.brain = [dsigmoid_eep_layer, out_layer]
 
 	# Find bounded number of fish within perception
 	def seeable_prey(self):
@@ -99,9 +113,10 @@ class Shark(Agent):
 			intermediary_outputs.append(intermediary)
 
 		angle, norm = intermediary_outputs[-1][0], intermediary_outputs[-1][1]
-		if norm > self.max_speed: # this is wrong, it should be handled by the sigmoid
-			norm = self.max_speed
-			self.speed = norm
+		# TODO: probably deadcode, remove it later
+		# if norm > self.max_speed: # this is wrong, it should be handled by the sigmoid
+		# 	norm = self.max_speed
+		# 	self.speed = norm
 		new_x = self.pos[0] + norm * cos(angle)
 		new_y = self.pos[1] + norm * sin(angle)
 
