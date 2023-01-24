@@ -19,7 +19,6 @@ class Neuron(object):
 		self.bound = bound
 
 	def __call__(self, input_data):
-		print(f"l(w) = {len(self.weights)} | l(i) = {len(input_data)}")
 		return self.sigmoid(
 			self.bound,
 			sum([self.weights[i] * input_data[i] for i in range(len(self.weights))])
@@ -58,7 +57,7 @@ class Shark(Agent):
 
 		# Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
         # is related to the max speed of a fish, TODO: decide on precise relationship
-		self.max_speed = 10 * self.mass
+		self.max_speed = 100 * self.mass
 		
 		# now we create the brain, which is basically putting structure to the weigts		
 		nb_weight_per_deep_neuron = nb_seeable_fish * 2
