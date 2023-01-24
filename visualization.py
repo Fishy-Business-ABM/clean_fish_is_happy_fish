@@ -39,7 +39,7 @@ Shark(model=sea,
       pos=(0.5 * width, 0.5 * height),
       perception=60,
       nb_seeable_fish=5,
-      nb_deep_neurons=1,
+      nb_deep_neurons=3,
       weights=range(36),
       eat_radius=100,
       energy=20,
@@ -62,7 +62,7 @@ def draw():
 
     sharks = copy(sea.sharks)
     for shark in sharks:
-        #rect(shark.pos, shark.energy, shark.energy)
+        rect(shark.pos, shark.energy, shark.energy)
         #prey = shark.seeable_prey()
         #shark.eat(prey)
         #shark.metabolize()
