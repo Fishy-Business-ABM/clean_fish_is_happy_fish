@@ -4,6 +4,7 @@ from p5 import stroke,circle # what does this do ?
 from food import Food
 from model import Model
 from agent import Agent
+import random
 
 from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
@@ -19,17 +20,25 @@ class Fish(Agent):
         mass: float,
         metabolism: float, # TODO: metabolism now superfluous because of introduction of mass!
         energy: float,
-        eat_radius: float
+        eat_radius: float,
+        genes: List[float]
     ):
         super(Fish, self).__init__(pos)
         self.perception = perception
         self.model = model
         self.model.add_entity(self)
         self.velocity = velocity
+        self.max_speed = genes[-1]
+        self.align_weight = genes[0]
+        self.cohesion_weight = genes[1]
+        self.separation_weight = genes[2]
+        self.metabolism = metabolism
         self.mass = mass
         self.energy = energy
         self.eat_radius = eat_radius
         self.max_energy = 1
+        self.genes = genes
+        
 
         # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
         # is related to the max speed of a fish, TODO: decide on precise relationship
@@ -51,7 +60,6 @@ class Fish(Agent):
         alignment_strength = 0.05
         avg_vel = [float(0) for _ in self.pos]
         align_update = [float(0) for _ in self.pos]        
-        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return align_update
@@ -74,7 +82,6 @@ class Fish(Agent):
         min_dist = 20
 
         neighbors = self.neighbors
-        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return separation_update
@@ -96,7 +103,6 @@ class Fish(Agent):
         com = [float(0) for _ in self.pos]
 
         neighbors = self.neighbors
-        steering = [0 for _ in self.pos]
 
         if len(neighbors) == 0:
             return cohesion_update
@@ -192,8 +198,29 @@ class Fish(Agent):
         if self.energy < 0:
             self.model.remove_entity(self)
 
+             
+    def recombine_genes(self, second_parent) -> List[float]:
+        recombine_list = [random.randint(0,1) for _ in range(len(self.genes))]
+
+        child_genes = [gene * recombine_list[i] + (1-recombine_list[i])*second_parent.genes[i] for i,gene in enumerate(self.genes)]
+
+        return child_genes
+
+    def reproduce(self):
+        self.neighbors = self.model.get_neighbors(self,self.perception,False)
+        partner = random.randint(0,len(self.neighbors)-1)
+        child_genes = self.recombine_genes(self.neighbors[partner])
+
+        Fish(self.model,self.pos,self.perception,self.velocity,self.metabolism,self.energy,self.eat_radius,child_genes)
+
+
     def step(self):
         self.neighbors = self.model.get_neighbors(self, self.perception, False)
+
+        reproduction_rate = 0.0001
+        if self.energy > 0.75 * self.max_energy and random.random() < reproduction_rate:
+            self.reproduce()
+
 
         alignment = self.align()
         separation = self.separation()
@@ -211,11 +238,11 @@ class Fish(Agent):
         neo_velocity = []
         for i in range(len(self.pos)):
             component = sum([inertia_weight      * self.velocity[i],
-                             align_weight        * alignment[i],
-                             separation_weight   * separation[i],
-                             cohesion_weight     * cohesion[i],
-                             towards_food_weight * towards_food[i],
-                             avoid_shark_weight  * avoid_shark[i]])
+                             self.align_weight        * alignment[i],
+                             self.separation_weight   * separation[i],
+                             self.cohesion_weight     * cohesion[i], # Note from Mehdi: chose to keep the self. from fish reproduction
+                             towards_food_weight * towards_food[i]]) # because they are from genes, but then it is weird
+                             avoid_shark_weight  * avoid_shark[i]])  # that towards_food_weight and avoid_shark_weight aren't genes
 
             neo_velocity.append(component)
 

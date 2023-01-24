@@ -1,7 +1,7 @@
 from p5 import *
 from fish import Fish
 import model
-from random import uniform
+from random import uniform, normalvariate
 from shark import Shark
 from copy import copy
 from food import Food
@@ -33,7 +33,7 @@ Food(sea, (0.4 * width, 0.4 * height), 0.005)
 for _ in range(n_fish):
     pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
     vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
-    fish = Fish(sea, pos, perception, vel, 0.0001, 0.001, 1, 15)
+    fish = Fish(sea, pos, perception, vel, 0.0001, 0.001, 1, 15, [1,1,1,10])
 '''
 Shark(model=sea,
       pos=(0.5 * width, 0.5 * height),
