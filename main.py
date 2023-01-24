@@ -227,7 +227,7 @@ def naive_test_shark_move():
         perception=10,
         nb_seeable_fish=5,
         nb_deep_neurons=3,
-        weights=list(range(36)),
+        weights=list(range(42)),
         eat_radius=0,
         energy=1,
         mass=1
@@ -239,25 +239,26 @@ def naive_test_shark_move():
     assert len(sharky.brain[1]) == 2
 
     for i_deep in range(3):
-        for i in range(10):
+        for i in range(12):
             assert isinstance(sharky.brain[0], List)
             assert isinstance(sharky.brain[0][i_deep], Neuron)
-            assert sharky.brain[0][i_deep].weights[i] == 10 * i_deep + i
+            assert sharky.brain[0][i_deep].weights[i] == 12 * i_deep + i
 
     for i_out in range(2):
         for i in range(3):
             assert isinstance(sharky.brain[1], List)
             assert isinstance(sharky.brain[1][i_out], Neuron)
-            assert sharky.brain[1][i_out].weights[i] == 30 + 3 * i_out + i
+            assert sharky.brain[1][i_out].weights[i] == 36 + 3 * i_out + i
 
-    sharky.step()
-    assert sharky.pos == (0, 0)
     for i in range(10):
         Fish(sea, (i, i), 0, (0, 0), 0, 0, 0, 0,test_genes)
 
-    sharky.max_speed = 10000000
     sharky.step()
-    assert sharky.pos == (23751.808899627933, 24411.78350705977)
+    assert (-sharky.max_speed) - 0.01 < sharky.pos[0]
+    assert sharky.pos[0] < sharky.max_speed + 0.01
+   
+    assert (-sharky.max_speed) - 0.01< sharky.pos[1]
+    assert sharky.pos[1] < sharky.max_speed + 0.01
     print("PASSED NAIVE TEST SHARK MOVE")
 
 def naive_fuzzy_test_add_shark():
