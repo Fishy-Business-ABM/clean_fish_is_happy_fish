@@ -19,6 +19,8 @@ class Neuron(object):
 		self.bound = bound
 
 	def __call__(self, input_data):
+		print(f"weights: {self.weights}")
+		print(f"values: {input_data}")
 		return self.sigmoid(
 			self.bound,
 			sum([self.weights[i] * input_data[i] for i in range(len(self.weights))])
@@ -66,7 +68,7 @@ class Shark(Agent):
 		deep_layer = [
 			Neuron(
 				weights = weights[i * nb_weight_per_deep_neuron: (i + 1) *nb_weight_per_deep_neuron],
-				sigmoid = sigmoid_function,
+				sigmoid = lambda b, x: x,
 				bound = 1
 			)
 			for i in range(nb_deep_neurons)
@@ -107,7 +109,10 @@ class Shark(Agent):
 		prey_positions = reduce(lambda acc, elm: acc + [elm[0].pos[0]] + [elm[0].pos[1]], prey, [])
 		prey_positions += [0 for _ in range(2 * self.nb_seeable_fish - len(prey_positions))]
 
-		intermediary_outputs = [list(self.pos) + prey_positions]
+		inputs = list(self.pos) + prey_positions
+		inputs = [inputs[i] / self.model.window[i % 2] for i in range(len(inputs))]
+
+		intermediary_outputs = [inputs]
 		for layer in self.brain:
 			intermediary = [neuron(intermediary_outputs[-1]) for neuron in layer]
 			intermediary_outputs.append(intermediary)
@@ -124,10 +129,9 @@ class Shark(Agent):
 
 		self.pos = (new_x, new_y)
 		
-		print(intermediary_outputs)
-
-		print(angle)
-		print(norm)
+		for io in intermediary_outputs:
+			print(io)
+		print("")
 
 	# Eat potential prey within eating radius
 	def eat(self, prey):
