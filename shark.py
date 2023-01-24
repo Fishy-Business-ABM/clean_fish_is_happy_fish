@@ -113,10 +113,12 @@ class Shark(Agent):
 			intermediary_outputs.append(intermediary)
 
 		angle, norm = intermediary_outputs[-1][0], intermediary_outputs[-1][1]
+		
 		# TODO: probably deadcode, remove it later
 		# if norm > self.max_speed: # this is wrong, it should be handled by the sigmoid
 		# 	norm = self.max_speed
-		# 	self.speed = norm
+		
+		self.speed = norm
 		new_x = self.pos[0] + norm * cos(angle)
 		new_y = self.pos[1] + norm * sin(angle)
 
