@@ -91,7 +91,7 @@ class Shark(Agent):
 
 		out_layer = [angle_out, norm_out]
 
-		self.brain = [dsigmoid_eep_layer, out_layer]
+		self.brain = [deep_layer, out_layer]
 
 	# Find bounded number of fish within perception
 	def seeable_prey(self):
