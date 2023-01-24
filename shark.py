@@ -123,6 +123,11 @@ class Shark(Agent):
 		new_y = self.pos[1] + norm * sin(angle)
 
 		self.pos = (new_x, new_y)
+		
+		print(intermediary_outputs)
+
+		print(angle)
+		print(norm)
 
 	# Eat potential prey within eating radius
 	def eat(self, prey):
