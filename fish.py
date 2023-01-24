@@ -17,7 +17,8 @@ class Fish(Agent):
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
-        metabolism: float,
+        mass: float,
+        metabolism: float, # TODO: metabolism now superfluous because of introduction of mass!
         energy: float,
         eat_radius: float,
         genes: List[float]
@@ -32,11 +33,16 @@ class Fish(Agent):
         self.cohesion_weight = genes[1]
         self.separation_weight = genes[2]
         self.metabolism = metabolism
+        self.mass = mass
         self.energy = energy
         self.eat_radius = eat_radius
         self.max_energy = 1
         self.genes = genes
         
+
+        # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
+        # is related to the max speed of a fish, TODO: decide on precise relationship
+        self.max_speed = 100000 * self.mass
 
     def boundary(self, velocity, boundary_strength) -> List[float]:
         max_dist = 0.1 * self.model.window[0]
@@ -68,8 +74,6 @@ class Fish(Agent):
             align_update[i] = (avg_vel[i] - self.velocity[i]) * alignment_strength
 
         return align_update
-
-
 
     def separation(self) -> List[float]:
         separation_update = [float(0) for _ in self.pos]
@@ -138,13 +142,33 @@ class Fish(Agent):
                     continue
                 
                 direction = food[0].pos[i] - self.pos[i]
-                towards_food_update[i] = direction * nutritional_value * hunger * attraction
+                towards_food_update[i] += direction * nutritional_value * hunger * attraction
         
         for i in range(len(self.pos)):
             towards_food_update[i] /= count
         
         return towards_food_update
 
+    def avoid_shark(self) -> List[float]:
+        avoid_shark_update = [float(0) for _ in self.pos]
+
+        visible_sharks = self.model.get_neighboring(self, self.perception, False, self.model.sharks)
+        if len(visible_sharks) == 0:
+            return avoid_shark_update
+
+        count = len(visible_sharks)
+        for shark in visible_sharks:
+            if shark[1] == 0:
+                count -= 1
+                continue
+
+            for i in range(len(self.pos)):
+                avoid_shark_update[i] += (self.pos[i] - shark[0].pos[i]) / shark[1]
+        
+        for i in range(len(self.pos)):
+            avoid_shark_update[i] /= count
+        
+        return avoid_shark_update
 
     def limit_velocity(self, velocity) -> List[float]:
         vel_length = compute_norm(tuple(velocity))
@@ -169,7 +193,7 @@ class Fish(Agent):
     
     # Do metabolism and possibly die
     def metabolize(self):
-        self.energy -= self.metabolism
+        self.energy -= self.mass * compute_norm(self.velocity) ** 2
 
         if self.energy < 0:
             self.model.remove_entity(self)
@@ -202,20 +226,23 @@ class Fish(Agent):
         separation = self.separation()
         cohesion = self.cohesion()
         towards_food = self.towards_food()
+        avoid_shark = self.avoid_shark()
 
         inertia_weight = 1
         align_weight = 1
         separation_weight = 1
         cohesion_weight = 1
         towards_food_weight = 5
+        avoid_shark_weight = 2
 
         neo_velocity = []
         for i in range(len(self.pos)):
             component = sum([inertia_weight      * self.velocity[i],
                              self.align_weight        * alignment[i],
                              self.separation_weight   * separation[i],
-                             self.cohesion_weight     * cohesion[i],
-                             towards_food_weight * towards_food[i]])
+                             self.cohesion_weight     * cohesion[i], # Note from Mehdi: chose to keep the self. from fish reproduction
+                             towards_food_weight * towards_food[i]]) # because they are from genes, but then it is weird
+                             avoid_shark_weight  * avoid_shark[i]])  # that towards_food_weight and avoid_shark_weight aren't genes
 
             neo_velocity.append(component)
 

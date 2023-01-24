@@ -127,9 +127,9 @@ def naive_test_fish_eat():
 
     food.regrow()
     fish.eat()
-    assert food.available_fraction == 0
+    assert food.available_fraction == 0.5
     assert len(sea.regrowing_foods) == 1
-    assert 1.4999 < fish.energy and fish.energy < 1.5001
+    assert 0.9999 < fish.energy and fish.energy < 1.0001
 
     print("PASSED NAIVE TEST FISH EAT")
 
@@ -139,7 +139,7 @@ def naive_test_fish_metabolize():
 
     fish.metabolize()
     assert len(sea.entities) == 1
-    assert 0.1999 < fish.energy and fish.energy < 0.2001
+    assert 0.3599 < fish.energy and fish.energy < 0.3601
 
     fish.metabolize()
     assert len(sea.entities) == 0
@@ -172,7 +172,7 @@ def naive_test_shark_eat():
         weights=list(range(36)),
         eat_radius=1,
         energy=0,
-        metabolism=0
+        mass=0
     )
     sea.add_shark(shark)
 
@@ -196,13 +196,13 @@ def naive_test_shark_metabolize():
         weights=list(range(36)),
         eat_radius=0,
         energy=1,
-        metabolism=0.8
+        mass=1
     )
-    sea.add_shark(shark)
+    shark.speed = 0.8
 
     shark.metabolize()
     assert len(sea.sharks) == 1
-    assert 0.1999 < shark.energy and shark.energy < 0.2001
+    assert 0.3599 < shark.energy and shark.energy < 0.3601
 
     shark.metabolize()
     assert len(sea.sharks) == 0
@@ -220,7 +220,7 @@ def naive_test_shark_move():
         weights=list(range(36)),
         eat_radius=0,
         energy=1,
-        metabolism=0
+        mass=1
     )
 
     assert isinstance(sharky.brain, List)
@@ -245,6 +245,7 @@ def naive_test_shark_move():
     for i in range(10):
         Fish(sea, (i, i), 0, (0, 0), 0, 0, 0,test_genes)
 
+    sharky.max_speed = 10000000
     sharky.step()
     assert sharky.pos == (23751.808899627933, 24411.78350705977)
     print("PASSED NAIVE TEST SHARK MOVE")
@@ -261,7 +262,7 @@ def naive_fuzzy_test_add_shark():
               weights=[],
               eat_radius=0,
               energy=0,
-              metabolism=0)
+              mass=0)
     assert len(sea.sharks) == n_sharks
     print("PASSED NAIVE FUZZY TEST ADD SHARK")
 
@@ -275,7 +276,7 @@ def naive_test_remove_shark():
                   weights=[],
                   eat_radius=0,
                   energy=0,
-                  metabolism=0)
+                  mass=0)
     assert len(sea.sharks) == 1
     shark.model.remove_shark(shark)
     assert len(sea.sharks) == 0
@@ -287,8 +288,17 @@ def naive_test_towards_food():
     fish = Fish(sea, (1,1), 10, (0,0), 0, 0, 0,food_genes)
     food = Food(sea, (3,1), 0)
     food.available_fraction = 0.5
-    assert fish.towards_food() == [1,0]
+    assert fish.towards_food() == [0.4,0]
+
+    food = Food(sea, (-1,1), 0)
+    food.available_fraction = 0.5
+    assert fish.towards_food() == [0,0]
+
+    food = Food(sea, (1,3), 0)
+    food.available_fraction = 0.5
+    assert fish.towards_food() == [0,0.4/3]
     print("PASSED NAIVE TEST TOWARDS FOOD")
+
 
 def naive_test_reproduce():
     sea = Model(100,100)
@@ -298,6 +308,33 @@ def naive_test_reproduce():
     fish1.reproduce()
     assert len(sea.entities) == 3
     print("PASSED NAIVE REPRODUCTION TEST")
+
+def naive_test_avoid_shark():
+    sea = Model(100,100)
+    fish = Fish(sea, (0,0), 2, (0,0), 0, 0, 0, 0)
+    Shark(model=sea,
+          pos=(1,0),
+          perception=0,
+          nb_seeable_fish=0,
+          nb_deep_neurons=0,
+          weights=[],
+          eat_radius=0,
+          energy=0,
+          mass=0)
+    assert fish.avoid_shark() == [-1,0]
+
+    Shark(model=sea,
+          pos=(-1,0),
+          perception=0,
+          nb_seeable_fish=0,
+          nb_deep_neurons=0,
+          weights=[],
+          eat_radius=0,
+          energy=0,
+          mass=0)
+    assert fish.avoid_shark() == [0,0]
+    print("PASSED NAIVE TEST AVOID SHARK")
+
 
 if __name__ == '__main__':
     naive_test_add_fish()
@@ -321,3 +358,5 @@ if __name__ == '__main__':
     naive_test_remove_shark()
     naive_test_towards_food()
     naive_test_fish_eat()
+    naive_test_avoid_shark()
+
