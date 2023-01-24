@@ -19,6 +19,7 @@ class Neuron(object):
 		self.bound = bound
 
 	def __call__(self, input_data):
+		print(f"l(w) = {len(self.weights)} | l(i) = {len(input_data)}")
 		return self.sigmoid(
 			self.bound,
 			sum([self.weights[i] * input_data[i] for i in range(len(self.weights))])
