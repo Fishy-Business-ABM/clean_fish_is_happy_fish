@@ -1,5 +1,5 @@
 from functools import reduce
-from math import sin, cos
+from math import sin, cos, exp
 from model import Model
 from agent import Agent
 from typing import Tuple, List
@@ -22,6 +22,8 @@ class Neuron(object):
 	def __str__(self):
 		return str(self.weights)
 
+def sigmoid_function(boundary: float, x: float) -> float: # between -boundary and boundary
+	return boundary / (1 + exp(-x))
 
 class Shark(Agent):
 	"""docstring for Shark"""
@@ -59,7 +61,7 @@ class Shark(Agent):
 		deep_layer = [
 			Neuron(
 				weights[i * nb_weight_per_deep_neuron: (i + 1) *nb_weight_per_deep_neuron],
-				lambda x: x
+				sigmoid_function
 			)
 			for i in range(nb_deep_neurons)
 		]
@@ -70,8 +72,8 @@ class Shark(Agent):
 		# maybe make a better sigmoid for the output if we notice gradient explosions?
 		# also, for the angle output, we want to restrain that
 		# for the norm out, we also want to restrain that, so there a sigmoid is needed
-		angle_out = Neuron(weights[end_deep_neurons:end_angle_out], lambda x: x)
-		norm_out = Neuron(weights[end_angle_out:], lambda x: x)
+		angle_out = Neuron(weights[end_deep_neurons:end_angle_out], sigmoid_function)
+		norm_out = Neuron(weights[end_angle_out:], sigmoid_function)
 
 		out_layer = [angle_out, norm_out]
 
@@ -97,7 +99,7 @@ class Shark(Agent):
 			intermediary_outputs.append(intermediary)
 
 		angle, norm = intermediary_outputs[-1][0], intermediary_outputs[-1][1]
-		if norm > self.max_speed:
+		if norm > self.max_speed: # this is wrong, it should be handled by the sigmoid
 			norm = self.max_speed
 			self.speed = norm
 		new_x = self.pos[0] + norm * cos(angle)
