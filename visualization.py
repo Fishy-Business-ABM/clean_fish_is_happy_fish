@@ -34,7 +34,7 @@ for _ in range(n_fish):
     pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
     vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
     fish = Fish(sea, pos, perception, vel, 0.0001, 0.001, 1, 15, [1,1,1,10])
-'''
+
 Shark(model=sea,
       pos=(0.5 * width, 0.5 * height),
       perception=60,
@@ -44,7 +44,6 @@ Shark(model=sea,
       eat_radius=100,
       energy=20,
       mass=0.2)
-'''
 
 def setup():
     size(width, height)
@@ -63,11 +62,11 @@ def draw():
 
     sharks = copy(sea.sharks)
     for shark in sharks:
-        rect(shark.pos, shark.energy, shark.energy)
-        prey = shark.seeable_prey()
-        shark.eat(prey)
-        shark.metabolize()
-        #shark.step()
+        #rect(shark.pos, shark.energy, shark.energy)
+        #prey = shark.seeable_prey()
+        #shark.eat(prey)
+        #shark.metabolize()
+        shark.step()
 
     fishes = copy(sea.entities)
     for fish in fishes:
