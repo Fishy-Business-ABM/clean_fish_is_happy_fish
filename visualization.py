@@ -1,7 +1,7 @@
 from p5 import *
 from fish import Fish
 import model
-from random import uniform, normalvariate
+from random import random, uniform, normalvariate
 from shark import Shark
 from copy import copy
 from food import Food
@@ -40,7 +40,7 @@ Shark(model=sea,
       perception=60,
       nb_seeable_fish=5,
       nb_deep_neurons=3,
-      weights=range(36),
+      weights=[random() for _ in range(36)],
       eat_radius=100,
       energy=20,
       mass=0.2)
