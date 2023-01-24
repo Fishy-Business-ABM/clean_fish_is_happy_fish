@@ -60,7 +60,7 @@ class Shark(Agent):
 		self.max_speed = 100 * self.mass
 		
 		# now we create the brain, which is basically putting structure to the weigts		
-		nb_weight_per_deep_neuron = nb_seeable_fish * 2
+		nb_weight_per_deep_neuron = (1 + nb_seeable_fish) * 2 # the one is for its own pos
 		end_deep_neurons = nb_weight_per_deep_neuron * nb_deep_neurons
 
 		deep_layer = [
@@ -107,7 +107,7 @@ class Shark(Agent):
 		prey_positions = reduce(lambda acc, elm: acc + [elm[0].pos[0]] + [elm[0].pos[1]], prey, [])
 		prey_positions += [0 for _ in range(2 * self.nb_seeable_fish - len(prey_positions))]
 
-		intermediary_outputs = [prey_positions]
+		intermediary_outputs = [list(self.pos) + prey_positions]
 		for layer in self.brain:
 			intermediary = [neuron(intermediary_outputs[-1]) for neuron in layer]
 			intermediary_outputs.append(intermediary)
