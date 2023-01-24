@@ -211,7 +211,7 @@ class Fish(Agent):
         partner = random.randint(0,len(self.neighbors)-1)
         child_genes = self.recombine_genes(self.neighbors[partner])
 
-        Fish(self.model,self.pos,self.perception,self.velocity,self.metabolism,self.energy,self.eat_radius,child_genes)
+        Fish(self.model,self.pos,self.perception,self.velocity,self.mass,self.metabolism,self.energy,self.eat_radius,child_genes)
 
 
     def step(self):

@@ -139,7 +139,7 @@ def naive_test_fish_metabolize():
         model=sea,
         pos=(0, 0),
         perception=0,
-        velocity=(0, 0),
+        velocity=(0.8, 0),
         mass=0.8,
         metabolism=0.8,
         energy=1, 
@@ -149,7 +149,7 @@ def naive_test_fish_metabolize():
 
     fish.metabolize()
     assert len(sea.entities) == 1
-    assert 0.3599 < fish.energy and fish.energy < 0.3601
+    assert 0.4879 < fish.energy and fish.energy < 0.4881
 
     fish.metabolize()
     assert len(sea.entities) == 0
@@ -160,7 +160,7 @@ def naive_test_model_step():
     step_genes = [1,1,1,1]
     sea = Model(100, 100)
 
-    fish = Fish(sea, (0,0), 1, (1,0), 0.5, 1, 1,step_genes)
+    fish = Fish(sea, (0,0), 1, (1,0), 0.5, 1, 1, 1, step_genes)
     sea.add_entity(fish)
 
     food = Food(sea, (0.5, 0), 0.5)
@@ -186,7 +186,7 @@ def naive_test_shark_eat():
     )
     sea.add_shark(shark)
 
-    fish = Fish(sea, (0.5, 0), 0, (0, 0), 0, 0, 0,test_genes)
+    fish = Fish(sea, (0.5, 0), 0, (0, 0), 0, 0, 0, 0, test_genes)
     sea.add_entity(fish)
     prey = shark.seeable_prey()
     shark.eat(prey)
@@ -253,7 +253,7 @@ def naive_test_shark_move():
     sharky.step()
     assert sharky.pos == (0, 0)
     for i in range(10):
-        Fish(sea, (i, i), 0, (0, 0), 0, 0, 0,test_genes)
+        Fish(sea, (i, i), 0, (0, 0), 0, 0, 0, 0,test_genes)
 
     sharky.max_speed = 10000000
     sharky.step()
@@ -295,7 +295,7 @@ def naive_test_remove_shark():
 def naive_test_towards_food():
     food_genes = [1,1,1,10]
     sea = Model(100,100)
-    fish = Fish(sea, (1,1), 10, (0,0), 0, 0, 0,food_genes)
+    fish = Fish(sea, (1,1), 10, (0,0), 0, 0, 0.5, 0, food_genes)
     food = Food(sea, (3,1), 0)
     food.available_fraction = 0.5
     assert fish.towards_food() == [0.4,0]
@@ -312,8 +312,8 @@ def naive_test_towards_food():
 
 def naive_test_reproduce():
     sea = Model(100,100)
-    fish1 = Fish(sea, (1,1), 10, (0,0), 0, 0, 0,test_genes)
-    fish2 = Fish(sea, (1,1), 10, (0,0), 0, 0, 0,test_genes2)
+    fish1 = Fish(sea, (1,1), 10, (0,0), 0, 0, 0, 0, test_genes)
+    fish2 = Fish(sea, (1,1), 10, (0,0), 0, 0, 0, 0, test_genes2)
 
     fish1.reproduce()
     assert len(sea.entities) == 3
@@ -321,7 +321,7 @@ def naive_test_reproduce():
 
 def naive_test_avoid_shark():
     sea = Model(100,100)
-    fish = Fish(sea, (0,0), 2, (0,0), 0, 0, 0, 0)
+    fish = Fish(sea, (0,0), 2, (0,0), 0, 0, 0, 0, [0,0,0])
     Shark(model=sea,
           pos=(1,0),
           perception=0,
