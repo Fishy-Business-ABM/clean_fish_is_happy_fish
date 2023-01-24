@@ -1,7 +1,7 @@
 from p5 import *
 from fish import Fish
 import model
-from random import uniform
+from random import uniform, normalvariate
 from shark import Shark
 from copy import copy
 from food import Food
