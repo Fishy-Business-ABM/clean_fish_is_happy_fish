@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 neovim = "*"
 typing = "*"
+matplotlib = "*"
+p5 = "*"
 
 [dev-packages]
 

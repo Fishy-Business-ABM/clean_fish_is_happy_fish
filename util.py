@@ -7,7 +7,7 @@ def euclidian_distance(pos_a, pos_b):
         out += (pos_a[i] - pos_b[i]) ** 2
     return math.sqrt(out)
 
-def compute_norm(pos: Tuple[float]) -> Tuple[float]:
+def compute_norm(pos: Tuple[float]) -> float:
     out = sum([p ** 2 for p in pos])
     out = math.sqrt(out)
     return out

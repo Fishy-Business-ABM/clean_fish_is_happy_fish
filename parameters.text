@@ -1,0 +1,15 @@
+Fish:
+speed_cost
+max_speed
+perception
+eat_radius
+
+Sharks:
+speed_cost
+max_speed
+perception
+eat_radius
+
+Food:
+regrowth_rate
+distribution
