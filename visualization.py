@@ -1,7 +1,7 @@
 from p5 import *
 from fish import Fish
 import model
-from random import uniform, normalvariate
+from random import random, uniform, normalvariate
 from shark import Shark
 from copy import copy
 from food import Food
@@ -33,16 +33,24 @@ Food(sea, (0.4 * width, 0.4 * height), 0.005)
 for _ in range(n_fish):
     pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
     vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
-    fish = Fish(sea, pos, perception, vel, 0.0001, 0.001, 1, 15, [1,1,1,10])
+    fish = Fish(
+            model=sea,
+            pos=pos,
+            perception=perception,
+            velocity=vel,
+            energy=1,
+            eat_radius=15,
+            genes=[1,1,1,2,5,0.0001]
+        )
 
 Shark(model=sea,
       pos=(0.5 * width, 0.5 * height),
-      perception=60,
+      perception=200,
       nb_seeable_fish=5,
-      nb_deep_neurons=1,
-      weights=range(36),
-      eat_radius=100,
-      energy=20,
+      nb_deep_neurons=3,
+      weights=[random() - 0.5 for _ in range(42)],
+      eat_radius=0,
+      energy=100000,
       mass=0.2)
 
 def setup():
@@ -62,7 +70,7 @@ def draw():
 
     sharks = copy(sea.sharks)
     for shark in sharks:
-        #rect(shark.pos, shark.energy, shark.energy)
+        rect(shark.pos, 5, 5)
         #prey = shark.seeable_prey()
         #shark.eat(prey)
         #shark.metabolize()

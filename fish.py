@@ -1,6 +1,3 @@
-import enum
-from numpy import euler_gamma # what does this do ?
-from p5 import stroke,circle # what does this do ?
 from food import Food
 from model import Model
 from agent import Agent
@@ -10,53 +7,72 @@ from typing import Tuple, List
 from util import normalize, euclidian_distance, compute_norm
 
 class Fish(Agent):
-    """docstring for Fish"""
+    """
+        genes: 
+            * align
+            * separation
+            * cohesion
+            * avoid_shark
+            * towards_food_weight
+            * mass
+    """
     def __init__(
         self,
         model: Model,
         pos: Tuple[float],
         perception: float,
         velocity: Tuple[float],
-        mass: float,
-        metabolism: float, # TODO: metabolism now superfluous because of introduction of mass!
         energy: float,
         eat_radius: float,
         genes: List[float]
     ):
         super(Fish, self).__init__(pos)
-        self.perception = perception
+
+        # model
         self.model = model
         self.model.add_entity(self)
+
+        # hard coded values
+        self.max_energy = 1
+        self.separation_strength = 0.05
+        self.min_dist = 20
+        self.cohesion_strength = 0.005
+
+        # specie-related values
+        self.perception = perception
         self.velocity = velocity
-        self.max_speed = genes[-1]
+        self.energy = energy
+        self.eat_radius = eat_radius
+        self.genes = genes
+        
+        # individual-related values
         self.align_weight = genes[0]
         self.cohesion_weight = genes[1]
         self.separation_weight = genes[2]
-        self.metabolism = metabolism
-        self.mass = mass
-        self.energy = energy
-        self.eat_radius = eat_radius
-        self.max_energy = 1
-        self.genes = genes
-        
+        self.avoid_shark_weight = genes[3]
+        self.towards_food_weight = genes[4]
+        self.mass = genes[5]
 
         # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
         # is related to the max speed of a fish, TODO: decide on precise relationship
         self.max_speed = 100000 * self.mass
 
-    def boundary(self, velocity, boundary_strength) -> List[float]:
-        max_dist = 0.1 * self.model.window[0]
+        # memoization values
+        self.neighbors = None
 
-        for i,pos in enumerate(self.pos):
-            if pos < max_dist:
-                velocity[i] += boundary_strength
-            if pos > self.model.window[i] - max_dist:
-                velocity[i] -= boundary_strength
+    def comfort_zone(self, velocity, comfort_zone_strength) -> List[float]:
+        for i, pos in enumerate(self.pos):
+            if pos <= 0:
+                velocity[i] += comfort_zone_strength
+                continue
+            
+            if pos >= self.model.window[i]:
+                velocity[i] -= comfort_zone_strength
 
         return velocity
 
     def align(self) -> List[float]:
-        neighbors = self.neighbors
+        neighbors = self.neighbors # set of (neighbor, distance)
         alignment_strength = 0.05
         avg_vel = [float(0) for _ in self.pos]
         align_update = [float(0) for _ in self.pos]        
@@ -65,58 +81,42 @@ class Fish(Agent):
             return align_update
 
         for i in range(len(self.pos)):
-            for fish in neighbors:
-                dist = euclidian_distance(self.pos, fish.pos)
-                if dist == 0:
-                    continue
-                avg_vel[i] += fish.velocity[i]
-            avg_vel[i] /= len(neighbors) 
+            neighbors_velocity = [n[0].velocity[i] for n in neighbors if n[1] != 0]
+            avg_vel[i] = sum(neighbors_velocity) / len(neighbors_velocity)
             align_update[i] = (avg_vel[i] - self.velocity[i]) * alignment_strength
 
         return align_update
 
     def separation(self) -> List[float]:
         separation_update = [float(0) for _ in self.pos]
-        separation_strength = 0.05
-
-        min_dist = 20
 
         neighbors = self.neighbors
 
         if len(neighbors) == 0:
             return separation_update
 
-        for fish in neighbors:
-            dist = euclidian_distance(self.pos, fish.pos)
-            if dist == 0 or dist > min_dist:
-                continue
+        # new code
+        close_neighbors = [n[0] for n in neighbors if n[1] != 0 and n[1] < self.min_dist]
 
+        for cn in close_neighbors:
             for i, pos in enumerate(self.pos):
-               separation_update[i] =  (pos - fish.pos[i]) * separation_strength
+               separation_update[i] =  (pos - cn.pos[i]) * self.separation_strength
 
         return separation_update
-    
+
     def cohesion(self) -> List[float]:
         cohesion_update = [float(0) for _ in self.pos]
-        cohesion_strength = 0.005
-
         com = [float(0) for _ in self.pos]
 
-        neighbors = self.neighbors
-
+        # new code
+        neighbors = [n[0] for n in self.neighbors if n[1] != 0]
         if len(neighbors) == 0:
             return cohesion_update
-
+        
         for i,pos in enumerate(self.pos):
-            for fish in neighbors:
-                dist = euclidian_distance(self.pos, fish.pos)
-                if dist == 0:
-                    continue
-
-                com[i] += fish.pos[i]
-                
+            com[i] = sum([n.pos[i] for n in neighbors])
             com[i] /= len(neighbors)
-            cohesion_update[i] = (com[i] - pos) * cohesion_strength
+            cohesion_update[i] = (com[i] - pos) * self.cohesion_strength
 
         return cohesion_update
 
@@ -160,14 +160,16 @@ class Fish(Agent):
         for shark in visible_sharks:
             if shark[1] == 0:
                 count -= 1
+                if count == 0:
+                    return avoid_shark_update
                 continue
 
             for i in range(len(self.pos)):
                 avoid_shark_update[i] += (self.pos[i] - shark[0].pos[i]) / shark[1]
-        
+
         for i in range(len(self.pos)):
             avoid_shark_update[i] /= count
-        
+
         return avoid_shark_update
 
     def limit_velocity(self, velocity) -> List[float]:
@@ -195,7 +197,7 @@ class Fish(Agent):
     def metabolize(self):
         self.energy -= self.mass * compute_norm(self.velocity) ** 2
 
-        if self.energy < 0:
+        if self.energy <= 0:
             self.model.remove_entity(self)
 
              
@@ -211,11 +213,19 @@ class Fish(Agent):
         partner = random.randint(0,len(self.neighbors)-1)
         child_genes = self.recombine_genes(self.neighbors[partner])
 
-        Fish(self.model,self.pos,self.perception,self.velocity,self.mass,self.metabolism,self.energy,self.eat_radius,child_genes)
+        Fish(
+            self.model,
+            self.pos,
+            self.perception,
+            self.velocity,
+            self.energy,
+            self.eat_radius,
+            child_genes
+        )
 
 
     def step(self):
-        self.neighbors = self.model.get_neighbors(self, self.perception, False)
+        self.neighbors = self.model.get_neighbors_w_distance(self, self.perception, False)
 
         reproduction_rate = 0.0001
         if self.energy > 0.75 * self.max_energy and random.random() < reproduction_rate:
@@ -246,7 +256,7 @@ class Fish(Agent):
 
             neo_velocity.append(component)
 
-        neo_velocity = self.boundary(neo_velocity, 1)
+        neo_velocity = self.comfort_zone(neo_velocity, 1)
         neo_velocity = self.limit_velocity(neo_velocity)
 
         neo_pos = [ self.pos[i] + neo_velocity[i] for i in range(len(self.pos)) ]

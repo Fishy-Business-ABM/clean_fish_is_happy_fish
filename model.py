@@ -11,6 +11,9 @@ class Model(object):
         self.regrowing_foods = set()
 
     def add_entity(self, entity):
+        if len(self.entities) == 500:
+            return
+
         assert "pos" in entity.__dict__ and isinstance(entity.pos, tuple)
         self.entities.add(entity)
 
