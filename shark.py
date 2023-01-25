@@ -19,8 +19,6 @@ class Neuron(object):
 		self.bound = bound
 
 	def __call__(self, input_data):
-		print(f"weights: {self.weights}")
-		print(f"values: {input_data}")
 		return self.sigmoid(
 			self.bound,
 			sum([self.weights[i] * input_data[i] for i in range(len(self.weights))])
@@ -33,6 +31,7 @@ def sigmoid_function(boundary: float, x: float) -> float: # between -boundary an
 	return boundary / (1 + exp(-x))
 
 class Shark(Agent):
+	# TODO: constrain shark to boundary
 	"""docstring for Shark"""
 	def __init__(
 		self,
@@ -128,10 +127,6 @@ class Shark(Agent):
 		new_y = self.pos[1] + norm * sin(angle)
 
 		self.pos = (new_x, new_y)
-		
-		for io in intermediary_outputs:
-			print(io)
-		print("")
 
 	# Eat potential prey within eating radius
 	def eat(self, prey):
