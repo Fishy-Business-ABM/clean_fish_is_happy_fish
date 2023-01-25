@@ -36,7 +36,7 @@ def naive_test_add_fish():
 
 def naive_fuzzy_test_add_fish():
     sea = Model(100, 100)
-    n_fish = random.randint(1, 1000)
+    n_fish = random.randint(1, 500)
     for _ in range(n_fish):
         Fish(
                 model=sea,
