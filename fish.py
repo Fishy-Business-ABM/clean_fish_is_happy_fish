@@ -204,14 +204,18 @@ class Fish(Agent):
     def recombine_genes(self, second_parent) -> List[float]:
         recombine_list = [random.randint(0,1) for _ in range(len(self.genes))]
 
-        child_genes = [gene * recombine_list[i] + (1-recombine_list[i])*second_parent.genes[i] for i,gene in enumerate(self.genes)]
+        child_genes = [gene * recombine_list[i] + (1 - recombine_list[i]) * second_parent.genes[i] for i,gene in enumerate(self.genes)]
 
         return child_genes
 
     def reproduce(self):
-        self.neighbors = self.model.get_neighbors(self,self.perception,False)
+
+        if len(self.neighbors) == 0:
+            return
+
+        neighbors = list(self.neighbors)
         partner = random.randint(0,len(self.neighbors)-1)
-        child_genes = self.recombine_genes(self.neighbors[partner])
+        child_genes = self.recombine_genes(neighbors[partner][0])
 
         Fish(
             self.model,
@@ -227,7 +231,7 @@ class Fish(Agent):
     def step(self):
         self.neighbors = self.model.get_neighbors_w_distance(self, self.perception, False)
 
-        reproduction_rate = 0.0001
+        reproduction_rate = 0.01
         if self.energy > 0.75 * self.max_energy and random.random() < reproduction_rate:
             self.reproduce()
 
@@ -251,8 +255,8 @@ class Fish(Agent):
                              self.align_weight        * alignment[i],
                              self.separation_weight   * separation[i],
                              self.cohesion_weight     * cohesion[i], # Note from Mehdi: chose to keep the self. from fish reproduction
-                             towards_food_weight * towards_food[i], # because they are from genes, but then it is weird
-                             avoid_shark_weight  * avoid_shark[i]])  # that towards_food_weight and avoid_shark_weight aren't genes
+                             self.towards_food_weight * towards_food[i], # because they are from genes, but then it is weird
+                             self.avoid_shark_weight  * avoid_shark[i]])  # that towards_food_weight and avoid_shark_weight aren't genes
 
             neo_velocity.append(component)
 
