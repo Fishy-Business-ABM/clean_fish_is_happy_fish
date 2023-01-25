@@ -36,6 +36,7 @@ class Fish(Agent):
         self.max_energy = 1
         self.separation_strength = 0.05
         self.min_dist = 20
+        self.cohesion_strength = 0.005
 
         # specie-related values
         self.perception = perception
@@ -99,31 +100,23 @@ class Fish(Agent):
 
         for cn in close_neighbors:
             for i, pos in enumerate(self.pos):
-               separation_update[i] =  (pos - fish.pos[i]) * self.separation_strength
+               separation_update[i] =  (pos - cn.pos[i]) * self.separation_strength
 
         return separation_update
 
     def cohesion(self) -> List[float]:
         cohesion_update = [float(0) for _ in self.pos]
-        cohesion_strength = 0.005
-
         com = [float(0) for _ in self.pos]
 
-        neighbors = self.neighbors
-
+        # new code
+        neighbors = [n[0] for n in self.neighbors if n[1] != 0]
         if len(neighbors) == 0:
             return cohesion_update
-
+        
         for i,pos in enumerate(self.pos):
-            for fish in neighbors:
-                dist = euclidian_distance(self.pos, fish.pos)
-                if dist == 0:
-                    continue
-
-                com[i] += fish.pos[i]
-                
+            com[i] = sum([n.pos[i] for n in neighbors])
             com[i] /= len(neighbors)
-            cohesion_update[i] = (com[i] - pos) * cohesion_strength
+            cohesion_update[i] = (com[i] - pos) * self.cohesion_strength
 
         return cohesion_update
 
