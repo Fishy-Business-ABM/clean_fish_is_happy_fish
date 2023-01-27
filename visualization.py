@@ -34,14 +34,10 @@ Food(sea, (0.4 * width, 0.4 * height), 0.005)
 
 for i in range(n_fish):
     pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
-    vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
     fish = Fish(
             model=sea,
             pos=pos,
             perception=perception,
-            velocity=vel,
-            energy=1,
-            eat_radius=15,
             genes=random_genes[i]
         )
 

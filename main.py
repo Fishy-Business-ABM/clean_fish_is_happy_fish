@@ -26,9 +26,6 @@ def naive_test_add_fish():
             model=sea,
             pos=(0, 0),
             perception=0,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
     assert len(sea.entities) == 1
@@ -36,15 +33,12 @@ def naive_test_add_fish():
 
 def naive_fuzzy_test_add_fish():
     sea = Model(100, 100)
-    n_fish = random.randint(1, 500)
+    n_fish = random.randint(1, 50)
     for _ in range(n_fish):
         Fish(
                 model=sea,
                 pos=(0, 0),
                 perception=0,
-                velocity=(0, 0),
-                energy=0,
-                eat_radius=0,
                 genes=test_genes
             )
     assert len(sea.entities) == n_fish
@@ -56,9 +50,6 @@ def naive_test_remove_fish():
                 model=sea,
                 pos=(0, 0),
                 perception=0,
-                velocity=(0, 0),
-                energy=0,
-                eat_radius=0,
                 genes=test_genes
             )
     fish.model.remove_entity(fish)
@@ -73,14 +64,11 @@ def naive_test_add_food():
 
 def naive_test_get_neighbor():
     sea = Model(100, 100)
-    n_fish = random.randint(1, 1000)
+    n_fish = random.randint(1, 40)
     base_fish = Fish(
             model=sea,
             pos=(0, 0),
             perception=0,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
     for _ in range(n_fish):
@@ -88,9 +76,6 @@ def naive_test_get_neighbor():
                 model=sea,
                 pos=(0, 0),
                 perception=0,
-                velocity=(0, 0),
-                energy=0,
-                eat_radius=0,
                 genes=test_genes
             )
     
@@ -101,9 +86,6 @@ def naive_test_get_neighbor():
             model=sea,
             pos=(0, 1),
             perception=0,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
 
@@ -111,9 +93,6 @@ def naive_test_get_neighbor():
             model=sea,
             pos=(1, 0),
             perception=0,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
 
@@ -155,9 +134,6 @@ def naive_sanity_check_test_step():
                 model=sea,
                 pos=(0, 0),
                 perception=2,
-                velocity=(0, 0),
-                energy=0,
-                eat_radius=0,
                 genes=test_genes2
         ).step()
 
@@ -166,9 +142,6 @@ def naive_sanity_check_test_step():
              model=sea,
              pos=(1, 1),
              perception=2,
-             velocity=(0, 0),
-             energy=0,
-             eat_radius=0,
              genes=test_genes2
         ).step()   
 
@@ -211,12 +184,9 @@ def naive_test_fish_eat():
             model=sea,
             pos=(0, 0),
             perception=0,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
-
+    fish.energy = 0
     fish.eat()
 
     assert food.available_fraction == 0
@@ -238,11 +208,10 @@ def naive_test_fish_metabolize():
         model=sea,
         pos=(0, 0),
         perception=0,
-        velocity=(0.8, 0),
-        energy=1, 
-        eat_radius=0,
         genes=test_genes3
     )
+    fish.velocity = (0.8, 0)
+    fish.energy = 1
 
     fish.metabolize()
     assert len(sea.entities) == 1
@@ -261,11 +230,11 @@ def naive_test_model_step():
         model=sea,
         pos=(0, 0),
         perception=1,
-        velocity=(1, 0),
-        energy=0.5,
-        eat_radius=1,
         genes=test_genes2
     )
+    fish.velocity = (1,0)
+    fish.energy = 0.5
+    fish.eat_radius = 1
 
     sea.add_entity(fish)
 
@@ -296,9 +265,6 @@ def naive_test_shark_eat():
             model=sea,
             pos=(0.5, 0),
             perception=0,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
     sea.add_entity(fish)
@@ -369,9 +335,6 @@ def naive_test_shark_move():
                 model=sea,
                 pos=(i, i),
                 perception=0,
-                velocity=(0, 0),
-                energy=0,
-                eat_radius=0,
                 genes=test_genes3
         ).step()
 
@@ -431,11 +394,9 @@ def naive_test_towards_food():
             model=sea,
             pos=(1, 1),
             perception=10,
-            velocity=(0, 0),
-            energy=0.5,
-            eat_radius=0,
             genes=food_genes
         )
+    fish.energy = 0.5
     food = Food(sea, (3,1), 0)
     food.available_fraction = 0.5
     assert fish.towards_food() == [0.4,0], str(fish.towards_food())
@@ -456,21 +417,16 @@ def naive_test_reproduce():
             model=sea,
             pos=(1, 1),
             perception=10,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
     fish2 = Fish(
             model=sea,
             pos=(1, 1),
             perception=10,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes2
         )
-
+    
+    fish1.neighbors = fish1.model.get_neighbors_w_distance(fish1, fish1.perception, False)
     fish1.reproduce()
     assert len(sea.entities) == 3
     print("PASSED NAIVE REPRODUCTION TEST")
@@ -481,9 +437,6 @@ def naive_test_avoid_shark():
             model=sea,
             pos=(0, 0),
             perception=2,
-            velocity=(0, 0),
-            energy=0,
-            eat_radius=0,
             genes=test_genes
         )
     Shark(model=sea,

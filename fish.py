@@ -21,9 +21,6 @@ class Fish(Agent):
         model: Model,
         pos: Tuple[float],
         perception: float,
-        velocity: Tuple[float],
-        energy: float,
-        eat_radius: float,
         genes: List[float]
     ):
         super(Fish, self).__init__(pos)
@@ -39,11 +36,14 @@ class Fish(Agent):
         self.cohesion_strength = 0.005
 
         # specie-related values
+            # variable parameters
         self.perception = perception
-        self.velocity = velocity
-        self.energy = energy
-        self.eat_radius = eat_radius
         self.genes = genes
+
+            # hard coded parameters
+        self.energy = 1 # initial energy
+        self.velocity = tuple([0 for _ in range(len(pos))]) # initial velocity
+        self.eat_radius = 0.1 * perception
         
         # individual-related values
         self.align_weight = genes[0]
@@ -82,7 +82,10 @@ class Fish(Agent):
 
         for i in range(len(self.pos)):
             neighbors_velocity = [n[0].velocity[i] for n in neighbors if n[1] != 0]
-            avg_vel[i] = sum(neighbors_velocity) / len(neighbors_velocity)
+            if len(neighbors_velocity) == 0:
+                avg_vel[i] = 0
+            else:
+                avg_vel[i] = sum(neighbors_velocity) / len(neighbors_velocity)
             align_update[i] = (avg_vel[i] - self.velocity[i]) * alignment_strength
 
         return align_update
@@ -221,9 +224,6 @@ class Fish(Agent):
             self.model,
             self.pos,
             self.perception,
-            self.velocity,
-            self.energy,
-            self.eat_radius,
             child_genes
         )
 
