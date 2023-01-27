@@ -63,9 +63,6 @@ def draw():
     sharks = copy(sea.sharks)
     for shark in sharks:
         rect(shark.pos, 5, 5)
-        prey = shark.seeable_prey()
-        shark.eat(prey)
-        shark.metabolize()
         shark.step()
 
     fishes = copy(sea.entities)
