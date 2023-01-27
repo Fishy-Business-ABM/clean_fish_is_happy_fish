@@ -66,6 +66,6 @@ out = execute(
     max_runtime=1000
     )
 
-param, r_squared = fit_levi_to_shark(out[2][0][0]["id"], out[2], 10)
+param, r_squared = fit_levi_to_shark(out[2][0][0]["id"], out[2], 50)
 print("Parameter: %f" %(param))
 print("R-squared value: ", r_squared)
