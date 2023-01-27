@@ -23,14 +23,8 @@ random_genes = [[normalvariate(gene_means[i], gene_stds[i]) for i in range(len(g
 #     for h in range(round(5*width/8),round(3*width/4),40):
 #         food = Food(sea, (w,h), 0.005)
 
-Food(sea, (0.2 * width, 0.2 * height), 0.005)
-Food(sea, (0.2 * width, 0.8 * height), 0.005)
-Food(sea, (0.8 * width, 0.2 * height), 0.005)
-Food(sea, (0.8 * width, 0.8 * height), 0.005)
-Food(sea, (0.4 * width, 0.4 * height), 0.005)
-Food(sea, (0.4 * width, 0.6 * height), 0.005)
-Food(sea, (0.6 * width, 0.4 * height), 0.005)
-Food(sea, (0.4 * width, 0.4 * height), 0.005)
+for _ in range(8):
+    Food(sea, (random() * width, random() * height), 0.005)
 
 for i in range(n_fish):
     pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
