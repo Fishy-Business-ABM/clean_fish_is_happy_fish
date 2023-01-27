@@ -55,6 +55,7 @@ class Shark(Agent):
 		self.energy = energy
 		self.mass = mass
 		self.speed = 0
+		self.angle = 0
 
 		# Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
         # is related to the max speed of a fish, TODO: decide on precise relationship
@@ -123,6 +124,7 @@ class Shark(Agent):
 		# 	norm = self.max_speed
 		
 		self.speed = norm
+		self.angle = angle
 		new_x = self.pos[0] + norm * cos(angle)
 		new_y = self.pos[1] + norm * sin(angle)
 

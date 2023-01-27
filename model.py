@@ -60,6 +60,9 @@ class Model(object):
 
     
     def step(self):
+        out_food = []
+        out_fish = []
+        out_shark = []
         '''
         TODO: change this to an elegant way of iterating over all regrowing foods and
         all entities, such that it is not a problem if foods or entities are removed from
@@ -69,9 +72,36 @@ class Model(object):
         regrowing_foods_copy = copy(self.regrowing_foods)
         entities_copy = copy(self.entities)
         sharks_copy = copy(self.sharks)
+
+        for food in self.foods:
+            out_food.append(
+                {
+                    "id": id(food),
+                    "pos": food.pos,
+                    "available_fraction": food.available_fraction
+                }
+            )
         for food in regrowing_foods_copy:
             food.step()
         for entity in entities_copy:
+            out_fish.append(
+                {
+                    "id": id(entity),
+                    "pos": entity.pos,
+                    "nb_neighbors": len(entity.neighbors),
+                    "genes": entity.genes
+                }
+            )
             entity.step()
         for shark in sharks_copy:
+            out_shark.append(
+                {
+                    "id": id(shark),
+                    "pos": shark.pos,
+                    "step-size": shark.speed,
+                    "angle": shark.angle
+                }
+            )
             shark.step()
+
+        return (out_food, out_fish, out_shark)

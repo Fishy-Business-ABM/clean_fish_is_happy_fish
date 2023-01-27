@@ -21,6 +21,7 @@ class Fish(Agent):
         model: Model,
         pos: Tuple[float],
         perception: float,
+        mass: float,
         genes: List[float]
     ):
         super(Fish, self).__init__(pos)
@@ -38,11 +39,15 @@ class Fish(Agent):
         # specie-related values
             # variable parameters
         self.perception = perception
+        self.mass = mass
         self.genes = genes
 
             # hard coded parameters
+        # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
+        # is related to the max speed of a fish, TODO: decide on precise relationship
+        self.max_speed = 100000 * self.mass
         self.energy = 1 # initial energy
-        self.velocity = tuple([0 for _ in range(len(pos))]) # initial velocity
+        self.velocity = tuple([random.uniform(-self.max_speed/2, self.max_speed/2) for _ in range(len(pos))]) # initial velocity
         self.eat_radius = 0.1 * perception
         
         # individual-related values
@@ -51,14 +56,9 @@ class Fish(Agent):
         self.separation_weight = genes[2]
         self.avoid_shark_weight = genes[3]
         self.towards_food_weight = genes[4]
-        self.mass = genes[5]
-
-        # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
-        # is related to the max speed of a fish, TODO: decide on precise relationship
-        self.max_speed = 100000 * self.mass
 
         # memoization values
-        self.neighbors = None
+        self.neighbors = set()
 
     def comfort_zone(self, velocity, comfort_zone_strength) -> List[float]:
         for i, pos in enumerate(self.pos):
@@ -224,6 +224,7 @@ class Fish(Agent):
             self.model,
             self.pos,
             self.perception,
+            self.mass,
             child_genes
         )
 
