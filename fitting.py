@@ -4,6 +4,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 from math import pi, exp
+from execute import execute
 
 # Define the linear function
 def levi(x_data, c):
@@ -39,3 +40,32 @@ def fit(x_data, y_data, function):
     plt.show()
 
     return (float(param[0]),float(r_squared))
+
+def fit_levi_to_shark(id, out_shark, precision):
+    step_lengths = []
+    for time in range(len(out_shark)):
+        for shark in out_shark[time]:
+            if shark["id"] == id:
+                step_lengths.append(shark["step-size"])
+
+    maximum = max(step_lengths)
+
+    boxes = [i / precision * maximum for i in range(precision+1)]
+    frequencies = [0 for _ in range(precision+1)]
+    for step_length in step_lengths:
+        frequencies[int((step_length / maximum) * precision)] += 1
+
+    return fit(np.array(boxes), np.array(frequencies), levi)
+
+out = execute(
+    nb_food=10,
+    nb_initial_fish=10,
+    nb_sharks=1,
+    mass_fish=0.0001,
+    food_regrowth_rate=0.005,
+    max_runtime=1000
+    )
+
+param, r_squared = fit_levi_to_shark(out[2][0][0]["id"], out[2], 10)
+print("Parameter: %f" %(param))
+print("R-squared value: ", r_squared)

@@ -3,7 +3,6 @@ from fish import Fish
 from food import Food
 from shark import Shark
 from random import random, normalvariate
-from fitting import fit, levi
 from math import trunc
 import numpy as np
 
@@ -24,7 +23,6 @@ weights = [random() - 0.5 for _ in range(42)]
 eat_radius = 20
 initial_energy = 100000
 mass = 0.2
-
 
 def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, max_runtime):
     sea = Model(width, height)
@@ -71,32 +69,3 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
             break
 
     return (out_food, out_fish, out_shark)
-
-def fit_levi_to_shark(id, out_shark, precision):
-    step_lengths = []
-    for time in range(len(out_shark)):
-        for shark in out_shark[time]:
-            if shark["id"] == id:
-                step_lengths.append(shark["step-size"])
-
-    maximum = max(step_lengths)
-
-    boxes = [i / precision * maximum for i in range(precision+1)]
-    frequencies = [0 for _ in range(precision+1)]
-    for step_length in step_lengths:
-        frequencies[int((step_length / maximum) * precision)] += 1
-
-    return fit(np.array(boxes), np.array(frequencies), levi)
-
-out = execute(
-    nb_food=10,
-    nb_initial_fish=10,
-    nb_sharks=1,
-    mass_fish=0.0001,
-    food_regrowth_rate=0.005,
-    max_runtime=1000
-    )
-
-param, r_squared = fit_levi_to_shark(out[2][0][0]["id"], out[2], 10)
-print("Parameter: %f" %(param))
-print("R-squared value: ", r_squared)
