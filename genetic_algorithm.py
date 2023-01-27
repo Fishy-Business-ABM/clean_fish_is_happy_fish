@@ -59,6 +59,9 @@ class PrintRecorder(object):
 		print(f"{self.counter}:")#" [{out}]")
 		print(f"{[x[1] for x in arg]}")
 		print("")
+		if (self.counter % 100 == 0):
+			for p in arg:
+			    print(p)
 		self.counter += 1
 
 class BigFitTestRecorder(object):

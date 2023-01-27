@@ -35,7 +35,7 @@ def shark_fitness(individual):
       nb_deep_neurons=3,
       weights=weights,
       eat_radius=20,
-      energy=1,
+      energy=100,
       mass=0.2)
 
     for _ in range(100):
@@ -75,4 +75,5 @@ if __name__ == '__main__':
         lambda x: x + 1 - random() * 2,
         0.1
     )
-    ga.run(5000, pr)
+    ga.run(500, pr)
+  
