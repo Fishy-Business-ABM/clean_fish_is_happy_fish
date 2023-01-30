@@ -1,0 +1,86 @@
+from p5 import *
+from fish import Fish
+import model
+from random import random, uniform, normalvariate
+from shark_automaton import SharkAutomaton
+from copy import copy
+from food import Food
+
+dimension = 150
+perception = 75
+n_fish = 30
+initial_max_speed = 10
+width = 800
+height = 800
+sea = model.Model(width,height)
+
+# for w in range(round(width/4),round(3*width/8),50):
+#     for h in range(round(width/4),round(3*width/8),40):
+#         food = Food(sea, (w,h), 0.005)
+# for w in range(round(5*width/8),round(3*width/4),50):
+#     for h in range(round(5*width/8),round(3*width/4),40):
+#         food = Food(sea, (w,h), 0.005)
+
+Food(sea, (0.2 * width, 0.2 * height), 0.005)
+Food(sea, (0.2 * width, 0.8 * height), 0.005)
+Food(sea, (0.8 * width, 0.2 * height), 0.005)
+Food(sea, (0.8 * width, 0.8 * height), 0.005)
+Food(sea, (0.4 * width, 0.4 * height), 0.005)
+Food(sea, (0.4 * width, 0.6 * height), 0.005)
+Food(sea, (0.6 * width, 0.4 * height), 0.005)
+Food(sea, (0.4 * width, 0.4 * height), 0.005)
+
+for _ in range(n_fish):
+    pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
+    vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
+    fish = Fish(
+            model=sea,
+            pos=pos,
+            perception=perception,
+            velocity=vel,
+            energy=1,
+            eat_radius=15,
+            genes=[1,1,1,2,5,0.0001]
+        )
+
+SharkAutomaton(
+        model=sea,
+        pos=(0.5 * width, 0.5 * height),
+        perception=200,
+        eat_radius=15,
+        mass=0.000002,
+        max_exploration_speed=50,
+        max_hunting_speed=100
+    )
+
+def setup():
+    size(width, height)
+
+
+def draw():
+    background(30,30,47)
+    stroke(255)
+
+    regrowing_foods = copy(sea.regrowing_foods)
+    for food in regrowing_foods:
+        food.step()
+    
+    for food in sea.foods:
+        circle(food.pos, 3*food.available_fraction)
+
+    sharks = copy(sea.sharks)
+    for shark in sharks:
+        rect(shark.pos, 5, 5)
+        #prey = shark.seeable_prey()
+        #shark.eat(prey)
+        #shark.metabolize()
+        shark.step()
+
+    fishes = copy(sea.entities)
+    for fish in fishes:
+        circle(fish.pos,10*fish.energy)
+        fish.step()
+
+if __name__ == '__main__':
+    run()
+
