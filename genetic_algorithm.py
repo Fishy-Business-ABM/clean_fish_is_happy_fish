@@ -56,8 +56,12 @@ class PrintRecorder(object):
 		self.counter = 0
 
 	def __call__(self, arg):
-		out = sum(map(lambda x: 0 if x[1] is None else x[1], arg))
-		print(f"{self.counter}: {out}")#" [{out}]")
+		print(f"{self.counter}:")#" [{out}]")
+		print(f"{[x[1] for x in arg]}")
+		print("")
+		if (self.counter % 100 == 0):
+			for p in arg:
+			    print(p)
 		self.counter += 1
 
 class BigFitTestRecorder(object):
