@@ -21,6 +21,7 @@ class Fish(Agent):
         pos: Tuple[float],
         perception: float,
         mass: float,
+        reproduction_rate: float,
         genes: List[float]
     ):
         super(Fish, self).__init__(pos)
@@ -40,6 +41,7 @@ class Fish(Agent):
         self.perception = perception
         self.mass = mass
         self.genes = genes
+        self.reproduction_rate = reproduction_rate
 
             # hard coded parameters
         # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
@@ -228,6 +230,7 @@ class Fish(Agent):
             self.pos,
             self.perception,
             self.mass,
+            self.reproduction_rate,
             child_genes
         )
 
@@ -235,8 +238,7 @@ class Fish(Agent):
     def step(self):
         self.neighbors = self.model.get_neighbors_w_distance(self, self.perception, False)
 
-        reproduction_rate = 0.01
-        if self.energy > 0.5 * self.max_energy and random.random() < reproduction_rate:
+        if self.energy > 0.5 * self.max_energy and random.random() < self.reproduction_rate:
             self.reproduce()
 
 
@@ -247,11 +249,6 @@ class Fish(Agent):
         avoid_shark = self.avoid_shark()
 
         inertia_weight = 1
-        align_weight = 1
-        separation_weight = 1
-        cohesion_weight = 1
-        towards_food_weight = 5
-        avoid_shark_weight = 2
 
         neo_velocity = []
         for i in range(len(self.pos)):
