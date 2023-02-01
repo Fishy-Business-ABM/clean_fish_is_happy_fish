@@ -7,6 +7,7 @@ from math import trunc
 import numpy as np
 from clustering_coeff import get_average_clustering
 from shark_automaton import SharkAutomaton
+from statistics import mean
 
 # Model parameters
 width = 10000
@@ -26,7 +27,7 @@ eat_radius = 20
 initial_energy = 100000
 mass = 0.2
 
-def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, max_runtime):
+def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, runtime):
     sea = Model(width, height)
 
     for _ in range(nb_food):
@@ -68,20 +69,20 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
     out_fish = []
     out_shark = []
 
-    for time in range(max_runtime):
+    for time in range(runtime):
         out = sea.step()
         out_food.append(out[0])
         out_fish.append(out[1])
         out_shark.append(out[2])
 
-        print("Progress: %i/%i" %(time+1,max_runtime))
+        print("Progress: %i/%i" %(time+1,runtime))
 
         if len(sea.sharks) == 0:
             break
 
     return (out_food, out_fish, out_shark)
 
-def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, max_runtime):
+def output_clustering(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, runtime):
     sea = Model(width, height)
 
     for _ in range(nb_food):
@@ -102,7 +103,7 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
 
         SharkAutomaton(
                 model=sea,
-                pos=(0.5 * width, 0.5 * height),
+                pos=(random() * width, random() * height),
                 perception=75,
                 eat_radius=15,
                 mass=0.000002,
@@ -122,17 +123,14 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
 
     clustering_over_time = []
 
-    for time in range(max_runtime):
-        out = sea.step()
+    for time in range(runtime):
+        sea.step()
 
-        if time % 100 == 0:
+        if time > runtime - 20:
             clustering_over_time.append(get_average_clustering(sea.entities))
 
-        print("Progress: %i/%i" %(time+1,max_runtime))
+        #print("Progress: %i/%i" %(time+1,runtime))
 
-        if len(sea.sharks) == 0:
-            return clustering_over_time
+    return mean(clustering_over_time)
 
-    return clustering_over_time
-
-print(output_clustering_over_time(50,50,1,0.0001,0.005,1000))
+#print(output_clustering(50,50,1,0.0001,0.005,1000))

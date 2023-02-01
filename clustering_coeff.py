@@ -80,6 +80,8 @@ def get_perception_clusters_w_clustering_coefficient(entities: List[any]):
     return clusters_w_clustering_k
 
 def get_average_clustering(entity: Set[any]):
+    if len(entity) == 0:
+        return 0
     graph = convert_to_graph(entity)
     edge_pairs = [
         [(i, j, {'weight': graph[i][j]}) for j in range(len(graph[i]))]
