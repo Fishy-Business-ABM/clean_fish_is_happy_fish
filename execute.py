@@ -5,10 +5,11 @@ from shark import Shark
 from random import random, normalvariate
 from math import trunc
 import numpy as np
+from clustering_coeff import get_average_clustering
 
 # Model parameters
-width = 800
-height = 800
+width = 1000
+height = 1000
 
 # Fish parameters
 perception_fish = 75
@@ -69,3 +70,49 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
             break
 
     return (out_food, out_fish, out_shark)
+
+def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, max_runtime):
+    sea = Model(width, height)
+
+    for _ in range(nb_food):
+        Food(sea, (random() * width, random() * height), food_regrowth_rate)
+    
+    for _ in range(nb_initial_fish):
+        pos = (random() * width, random() * height)
+        random_genes = [normalvariate(gene_means[i], gene_stds[i]) for i in range(len(gene_means))]
+        Fish(
+                model=sea,
+                pos=pos,
+                perception=perception_fish,
+                mass=mass_fish,
+                genes=random_genes
+            )
+    
+    for _ in range(nb_sharks):
+        Shark(model=sea,
+            pos=(random() * width, random() * height),
+            perception=perception_shark,
+            nb_seeable_fish=nb_seeable_fish,
+            nb_deep_neurons=nb_deep_neurons,
+            weights=weights,
+            eat_radius=eat_radius,
+            energy=initial_energy,
+            mass=mass
+        )
+
+    clustering_over_time = []
+
+    for time in range(max_runtime):
+        out = sea.step()
+
+        if time % 100 == 0:
+            clustering_over_time.append(get_average_clustering(sea.entities))
+
+        print("Progress: %i/%i" %(time+1,max_runtime))
+
+        if len(sea.sharks) == 0:
+            return clustering_over_time
+
+    return clustering_over_time
+
+print(output_clustering_over_time(5,50,1,0.0001,0.005,1000))

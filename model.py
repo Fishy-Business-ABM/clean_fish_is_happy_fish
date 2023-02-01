@@ -105,3 +105,8 @@ class Model(object):
             shark.step()
 
         return (out_food, out_fish, out_shark)
+    
+    def run_model(self, step_count=100):
+
+        for _ in range(step_count):
+            self.step()
