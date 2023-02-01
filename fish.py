@@ -21,9 +21,7 @@ class Fish(Agent):
         model: Model,
         pos: Tuple[float],
         perception: float,
-        velocity: Tuple[float],
-        energy: float,
-        eat_radius: float,
+        mass: float,
         genes: List[float]
     ):
         super(Fish, self).__init__(pos)
@@ -39,11 +37,18 @@ class Fish(Agent):
         self.cohesion_strength = 0.005
 
         # specie-related values
+            # variable parameters
         self.perception = perception
-        self.velocity = velocity
-        self.energy = energy
-        self.eat_radius = eat_radius
+        self.mass = mass
         self.genes = genes
+
+            # hard coded parameters
+        # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
+        # is related to the max speed of a fish, TODO: decide on precise relationship
+        self.max_speed = 100000 * self.mass
+        self.energy = 1 # initial energy
+        self.velocity = tuple([random.uniform(-self.max_speed/2, self.max_speed/2) for _ in range(len(pos))]) # initial velocity
+        self.eat_radius = 0.1 * perception
         
         # individual-related values
         self.align_weight = genes[0]
@@ -51,14 +56,9 @@ class Fish(Agent):
         self.separation_weight = genes[2]
         self.avoid_shark_weight = genes[3]
         self.towards_food_weight = genes[4]
-        self.mass = genes[5]
-
-        # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
-        # is related to the max speed of a fish, TODO: decide on precise relationship
-        self.max_speed = 100000 * self.mass
 
         # memoization values
-        self.neighbors = None
+        self.neighbors = set()
 
     def comfort_zone(self, velocity, comfort_zone_strength) -> List[float]:
         for i, pos in enumerate(self.pos):
@@ -82,7 +82,10 @@ class Fish(Agent):
 
         for i in range(len(self.pos)):
             neighbors_velocity = [n[0].velocity[i] for n in neighbors if n[1] != 0]
-            avg_vel[i] = sum(neighbors_velocity) / len(neighbors_velocity)
+            if len(neighbors_velocity) == 0:
+                avg_vel[i] = 0
+            else:
+                avg_vel[i] = sum(neighbors_velocity) / len(neighbors_velocity)
             align_update[i] = (avg_vel[i] - self.velocity[i]) * alignment_strength
 
         return align_update
@@ -204,22 +207,24 @@ class Fish(Agent):
     def recombine_genes(self, second_parent) -> List[float]:
         recombine_list = [random.randint(0,1) for _ in range(len(self.genes))]
 
-        child_genes = [gene * recombine_list[i] + (1-recombine_list[i])*second_parent.genes[i] for i,gene in enumerate(self.genes)]
+        child_genes = [gene * recombine_list[i] + (1 - recombine_list[i]) * second_parent.genes[i] for i,gene in enumerate(self.genes)]
 
         return child_genes
 
     def reproduce(self):
-        self.neighbors = self.model.get_neighbors(self,self.perception,False)
+
+        if len(self.neighbors) == 0:
+            return
+
+        neighbors = list(self.neighbors)
         partner = random.randint(0,len(self.neighbors)-1)
-        child_genes = self.recombine_genes(self.neighbors[partner])
+        child_genes = self.recombine_genes(neighbors[partner][0])
 
         Fish(
             self.model,
             self.pos,
             self.perception,
-            self.velocity,
-            self.energy,
-            self.eat_radius,
+            self.mass,
             child_genes
         )
 
@@ -227,7 +232,7 @@ class Fish(Agent):
     def step(self):
         self.neighbors = self.model.get_neighbors_w_distance(self, self.perception, False)
 
-        reproduction_rate = 0.0001
+        reproduction_rate = 0.01
         if self.energy > 0.75 * self.max_energy and random.random() < reproduction_rate:
             self.reproduce()
 
@@ -251,8 +256,8 @@ class Fish(Agent):
                              self.align_weight        * alignment[i],
                              self.separation_weight   * separation[i],
                              self.cohesion_weight     * cohesion[i], # Note from Mehdi: chose to keep the self. from fish reproduction
-                             towards_food_weight * towards_food[i], # because they are from genes, but then it is weird
-                             avoid_shark_weight  * avoid_shark[i]])  # that towards_food_weight and avoid_shark_weight aren't genes
+                             self.towards_food_weight * towards_food[i], # because they are from genes, but then it is weird
+                             self.avoid_shark_weight  * avoid_shark[i]])  # that towards_food_weight and avoid_shark_weight aren't genes
 
             neo_velocity.append(component)
 

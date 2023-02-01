@@ -13,7 +13,9 @@ initial_max_speed = 10
 width = 800
 height = 800
 sea = model.Model(width,height)
-
+gene_means = [1,1,1,2,5,0.0001]
+gene_stds = [gene / 10 for gene in gene_means]
+random_genes = [[normalvariate(gene_means[i], gene_stds[i]) for i in range(len(gene_means))] for _ in range(n_fish)]
 # for w in range(round(width/4),round(3*width/8),50):
 #     for h in range(round(width/4),round(3*width/8),40):
 #         food = Food(sea, (w,h), 0.005)
@@ -21,26 +23,16 @@ sea = model.Model(width,height)
 #     for h in range(round(5*width/8),round(3*width/4),40):
 #         food = Food(sea, (w,h), 0.005)
 
-Food(sea, (0.2 * width, 0.2 * height), 0.005)
-Food(sea, (0.2 * width, 0.8 * height), 0.005)
-Food(sea, (0.8 * width, 0.2 * height), 0.005)
-Food(sea, (0.8 * width, 0.8 * height), 0.005)
-Food(sea, (0.4 * width, 0.4 * height), 0.005)
-Food(sea, (0.4 * width, 0.6 * height), 0.005)
-Food(sea, (0.6 * width, 0.4 * height), 0.005)
-Food(sea, (0.4 * width, 0.4 * height), 0.005)
+for _ in range(8):
+    Food(sea, (random() * width, random() * height), 0.005)
 
-for _ in range(n_fish):
+for i in range(n_fish):
     pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
-    vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
     fish = Fish(
             model=sea,
             pos=pos,
             perception=perception,
-            velocity=vel,
-            energy=1,
-            eat_radius=15,
-            genes=[1,1,1,2,5,0.0001]
+            genes=random_genes[i]
         )
 
 Shark(model=sea,
@@ -71,9 +63,6 @@ def draw():
     sharks = copy(sea.sharks)
     for shark in sharks:
         rect(shark.pos, 5, 5)
-        #prey = shark.seeable_prey()
-        #shark.eat(prey)
-        #shark.metabolize()
         shark.step()
 
     fishes = copy(sea.entities)
