@@ -232,11 +232,7 @@ class Fish(Agent):
         self.neighbors = self.model.get_neighbors_w_distance(self, self.perception, False)
 
         reproduction_rate = 0.01
-<<<<<<< HEAD
         if self.energy > 0.5 * self.max_energy and random.random() < reproduction_rate:
-=======
-        if self.energy > 0.75 * self.max_energy and random.random() < reproduction_rate:
->>>>>>> refs/remotes/origin/main
             self.reproduce()
 
 

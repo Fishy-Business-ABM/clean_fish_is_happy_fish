@@ -37,10 +37,8 @@ for _ in range(n_fish):
             model=sea,
             pos=pos,
             perception=perception,
-            velocity=vel,
-            energy=1,
-            eat_radius=15,
-            genes=[1,1,1,2,5,0.0001]
+            mass=0.0001,
+            genes=[1,1,1,2,5]
         )
 
 SharkAutomaton(
