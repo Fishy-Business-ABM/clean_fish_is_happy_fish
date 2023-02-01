@@ -40,6 +40,7 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
                 pos=pos,
                 perception=perception_fish,
                 mass=mass_fish,
+                reproduction_rate=0.01,
                 genes=random_genes
             )
     
@@ -95,6 +96,7 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
                 pos=pos,
                 perception=perception_fish,
                 mass=mass_fish,
+                reproduction_rate=0.01,
                 genes=random_genes
             )
     
@@ -135,4 +137,4 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
 
     return clustering_over_time
 
-print(output_clustering_over_time(50,50,1,0.0001,0.005,1000))
+print(output_clustering_over_time(50,50,1,0.0001,0.005,10000))
