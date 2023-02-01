@@ -86,13 +86,13 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
 
     return (out_food, out_fish, out_shark)
 
-def output_clustering(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, runtime):
+def output_clustering(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_rate, runtime):
     sea = Model(width, height)
 
     for _ in range(nb_food):
         Food(sea, (random() * width, random() * height), food_regrowth_rate)
     
-    for _ in range(nb_initial_fish):
+    for _ in range(50):
         pos = (random() * width, random() * height)
         random_genes = [normalvariate(gene_means[i], gene_stds[i]) for i in range(len(gene_means))]
         Fish(
@@ -100,7 +100,7 @@ def output_clustering(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regro
                 pos=pos,
                 perception=perception_fish,
                 mass=mass_fish,
-                reproduction_rate=0.01,
+                reproduction_rate=reproduction_rate,
                 genes=random_genes
             )
     

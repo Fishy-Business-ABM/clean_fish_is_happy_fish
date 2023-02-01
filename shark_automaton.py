@@ -117,20 +117,16 @@ class SharkAutomaton(Agent):
         self.metabolize(distance_covered)
         if not 0 < self.pos[0]:
             self.pos = (0, self.pos[1])
-            print("links")
             self.angle = 0
         if not 0 < self.pos[1]:
             self.pos = (self.pos[0], 0)
-            print("boven")
             self.angle = pi/2
         if not self.pos[0] < self.model.window[0]: 
             self.pos = (self.model.window[0], self.pos[1])
             self.angle = pi 
-            print("rechts")
         if not self.pos[1] < self.model.window[1]:
             self.pos = (self.pos[0], self.model.window[1])
             self.angle = 3*pi/2
-            print("onder")
 
 
 if __name__ == '__main__':

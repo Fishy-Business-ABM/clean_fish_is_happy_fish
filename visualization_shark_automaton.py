@@ -38,7 +38,7 @@ for _ in range(n_fish):
             pos=pos,
             perception=perception,
             mass=0.0001,
-            genes=[1,1,1,2,5]
+            genes=[1,1,1,2,5],
         )
 
 SharkAutomaton(
