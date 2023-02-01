@@ -14,7 +14,6 @@ class Fish(Agent):
             * cohesion
             * avoid_shark
             * towards_food_weight
-            * mass
     """
     def __init__(
         self,
