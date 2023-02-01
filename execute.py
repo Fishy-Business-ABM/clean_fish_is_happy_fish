@@ -7,6 +7,7 @@ from math import trunc
 import numpy as np
 from clustering_coeff import get_average_clustering
 from shark_automaton import SharkAutomaton
+import pandas as pd
 
 # Model parameters
 width = 10000
@@ -75,7 +76,7 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
         out_fish.append(out[1])
         out_shark.append(out[2])
 
-        print("Progress: %i/%i" %(time+1,max_runtime))
+#        print("Progress: %i/%i" %(time+1,max_runtime))
 
         if len(sea.sharks) == 0:
             break
@@ -101,7 +102,6 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
             )
     
     for _ in range(nb_sharks):
-
         SharkAutomaton(
                 model=sea,
                 pos=(0.5 * width, 0.5 * height),
@@ -135,6 +135,8 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
         if len(sea.sharks) == 0:
             return clustering_over_time
 
-    return clustering_over_time
+
+
+
 
 print(output_clustering_over_time(50,50,1,0.0001,0.005,10000))
