@@ -6,15 +6,16 @@ from random import random, normalvariate
 from math import trunc
 import numpy as np
 from clustering_coeff import get_average_clustering
+from shark_automaton import SharkAutomaton
 
 # Model parameters
-width = 1000
-height = 1000
+width = 10000
+height = 10000
 
 # Fish parameters
 perception_fish = 75
 gene_means = [1, 1, 1, 2, 5]
-gene_stds = [gene / 10 for gene in gene_means]
+gene_stds = [gene  for gene in gene_means]
 
 # Shark parameters
 perception_shark = 200
@@ -43,16 +44,25 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
             )
     
     for _ in range(nb_sharks):
-        Shark(model=sea,
-            pos=(random() * width, random() * height),
-            perception=perception_shark,
-            nb_seeable_fish=nb_seeable_fish,
-            nb_deep_neurons=nb_deep_neurons,
-            weights=weights,
-            eat_radius=eat_radius,
-            energy=initial_energy,
-            mass=mass
-        )
+        SharkAutomaton(
+                model=sea,
+                pos=(0.5 * width, 0.5 * height),
+                perception=75,
+                eat_radius=15,
+                mass=0.000002,
+                max_exploration_speed=5,
+                max_hunting_speed=15
+            )
+#        Shark(model=sea,
+#            pos=(random() * width, random() * height),
+#            perception=perception_shark,
+#            nb_seeable_fish=nb_seeable_fish,
+#            nb_deep_neurons=nb_deep_neurons,
+#            weights=weights,
+#            eat_radius=eat_radius,
+#            energy=initial_energy,
+#            mass=mass
+#        )
     
     out_food = []
     out_fish = []
@@ -89,16 +99,26 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
             )
     
     for _ in range(nb_sharks):
-        Shark(model=sea,
-            pos=(random() * width, random() * height),
-            perception=perception_shark,
-            nb_seeable_fish=nb_seeable_fish,
-            nb_deep_neurons=nb_deep_neurons,
-            weights=weights,
-            eat_radius=eat_radius,
-            energy=initial_energy,
-            mass=mass
-        )
+
+        SharkAutomaton(
+                model=sea,
+                pos=(0.5 * width, 0.5 * height),
+                perception=75,
+                eat_radius=15,
+                mass=0.000002,
+                max_exploration_speed=5,
+                max_hunting_speed=15
+            )
+       # Shark(model=sea,
+       #     pos=(random() * width, random() * height),
+       #     perception=perception_shark,
+       #     nb_seeable_fish=nb_seeable_fish,
+       #     nb_deep_neurons=nb_deep_neurons,
+       #     weights=weights,
+       #     eat_radius=eat_radius,
+       #     energy=initial_energy,
+       #     mass=mass
+       # )
 
     clustering_over_time = []
 
@@ -115,4 +135,4 @@ def output_clustering_over_time(nb_food, nb_initial_fish, nb_sharks, mass_fish, 
 
     return clustering_over_time
 
-print(output_clustering_over_time(5,50,1,0.0001,0.005,1000))
+print(output_clustering_over_time(50,50,1,0.0001,0.005,1000))

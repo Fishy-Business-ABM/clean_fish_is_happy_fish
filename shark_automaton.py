@@ -108,8 +108,6 @@ class SharkAutomaton(Agent):
         self.energy -= self.mass * distance_covered ** 2
         self.energy *= 0.99
 
-        if self.energy <= 0:
-            self.model.remove_shark(self)
 
     def step(self):
         distance_covered = 0
