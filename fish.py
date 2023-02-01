@@ -211,6 +211,11 @@ class Fish(Agent):
 
         return child_genes
 
+    def mutate(genes):
+        if random.random() < 0.1:
+            genes[random.randint(0,len(genes) - 1)] *= random.uniform(0.9,1.1)
+        return genes
+
     def reproduce(self):
         if len(self.neighbors) == 0:
             return
