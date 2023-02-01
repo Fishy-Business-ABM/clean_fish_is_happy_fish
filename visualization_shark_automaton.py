@@ -10,8 +10,8 @@ dimension = 150
 perception = 75
 n_fish = 30
 initial_max_speed = 10
-width = 800
-height = 800
+width = 1900
+height = 1000
 sea = model.Model(width,height)
 
 # for w in range(round(width/4),round(3*width/8),50):
@@ -46,11 +46,11 @@ for _ in range(n_fish):
 SharkAutomaton(
         model=sea,
         pos=(0.5 * width, 0.5 * height),
-        perception=200,
+        perception=75,
         eat_radius=15,
         mass=0.000002,
-        max_exploration_speed=50,
-        max_hunting_speed=100
+        max_exploration_speed=5,
+        max_hunting_speed=15
     )
 
 def setup():
@@ -61,25 +61,28 @@ def draw():
     background(30,30,47)
     stroke(255)
 
-    regrowing_foods = copy(sea.regrowing_foods)
-    for food in regrowing_foods:
-        food.step()
     
     for food in sea.foods:
         circle(food.pos, 3*food.available_fraction)
 
+
+    fishes = copy(sea.entities)
+    for fish in fishes:
+        fill(0,255,0)
+        circle(fish.pos,10*fish.energy)
+        fish.step()
+    regrowing_foods = copy(sea.regrowing_foods)
+    for food in regrowing_foods:
+        food.step()
+
     sharks = copy(sea.sharks)
     for shark in sharks:
-        rect(shark.pos, 5, 5)
+        fill(255,0,0)
+        rect(shark.pos, 10, 10)
         #prey = shark.seeable_prey()
         #shark.eat(prey)
         #shark.metabolize()
         shark.step()
-
-    fishes = copy(sea.entities)
-    for fish in fishes:
-        circle(fish.pos,10*fish.energy)
-        fish.step()
 
 if __name__ == '__main__':
     run()

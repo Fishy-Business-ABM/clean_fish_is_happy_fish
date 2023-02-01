@@ -209,9 +209,12 @@ class Fish(Agent):
         return child_genes
 
     def reproduce(self):
-        self.neighbors = self.model.get_neighbors(self,self.perception,False)
+        if len(self.neighbors) == 0:
+            return
+
+        neighbors = list(self.neighbors)
         partner = random.randint(0,len(self.neighbors)-1)
-        child_genes = self.recombine_genes(self.neighbors[partner])
+        child_genes = self.recombine_genes(neighbors[partner][0])
 
         Fish(
             self.model,
@@ -227,8 +230,8 @@ class Fish(Agent):
     def step(self):
         self.neighbors = self.model.get_neighbors_w_distance(self, self.perception, False)
 
-        reproduction_rate = 0.0001
-        if self.energy > 0.75 * self.max_energy and random.random() < reproduction_rate:
+        reproduction_rate = 0.01
+        if self.energy > 0.5 * self.max_energy and random.random() < reproduction_rate:
             self.reproduce()
 
 
