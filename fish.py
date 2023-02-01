@@ -21,6 +21,7 @@ class Fish(Agent):
         pos: Tuple[float],
         perception: float,
         mass: float,
+        reproduction_rate: float,
         genes: List[float]
     ):
         super(Fish, self).__init__(pos)
@@ -40,6 +41,7 @@ class Fish(Agent):
         self.perception = perception
         self.mass = mass
         self.genes = genes
+        self.reproduction_rate = reproduction_rate
 
             # hard coded parameters
         # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
