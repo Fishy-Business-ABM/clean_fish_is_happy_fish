@@ -28,7 +28,7 @@ def OFAT(default_values, test_values, nb_iterations, steps_per_iteration):
             #print(avg)
             #var = variance(outs)
             stats_per_param.append(outs)
-        with open(params_to_change[i_param] +"_full.txt", "w") as file:
+        with open(params_to_change[i_param] +"_full2.txt", "w") as file:
             file.write(params_to_change[i_param]+ "\n")
             file.write(str(stats_per_param))
         stats.append(stats_per_param)
@@ -37,15 +37,15 @@ def OFAT(default_values, test_values, nb_iterations, steps_per_iteration):
     return stats
 
 print(OFAT([30,                             # default nb_food
-            0.01,                             # default reproduction rate
+            0.01,                           # default reproduction rate
             3,                              # default nb_sharks
             0.0001,                         # default mass_fish
             0.005],                         # default regrowth_rate
-            [range(10,50,5),                 # test values nb_food
-            np.arange(0.005,0.05,0.005),               # test values reproduction
+            [range(10,50,5),                # test values nb_food
+            np.arange(0.005,0.05,0.005),    # test values reproduction
             range(1,5,1),                   # test values nb_sharks
-            np.arange(0.00001,0.001,0.0001), # test values mass_fish
+            np.arange(0.00001,0.001,0.0001),# test values mass_fish
             np.arange(0.001,0.01,0.001)],   # test values regrowth_rate
-            30,                              # nb_iterations
-            1000))                           # steps_per_iteration
+            30,                             # nb_iterations
+            1000))                          # steps_per_iteration
 

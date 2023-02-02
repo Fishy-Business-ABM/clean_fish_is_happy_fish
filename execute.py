@@ -17,8 +17,8 @@ height = 10000
 
 # Fish parameters
 perception_fish = 75
-gene_means = [1, 1, 1, 2, 5]
-gene_stds = [gene  for gene in gene_means]
+gene_means = [5, 5, 5, 5, 5]
+gene_stds = [5, 5, 5, 5, 5]
 
 # Shark parameters
 perception_shark = 200
@@ -114,16 +114,6 @@ def output_clustering(nb_food, reproduction_rate, nb_sharks, mass_fish, food_reg
                 max_exploration_speed=5,
                 max_hunting_speed=15
             )
-       # Shark(model=sea,
-       #     pos=(random() * width, random() * height),
-       #     perception=perception_shark,
-       #     nb_seeable_fish=nb_seeable_fish,
-       #     nb_deep_neurons=nb_deep_neurons,
-       #     weights=weights,
-       #     eat_radius=eat_radius,
-       #     energy=initial_energy,
-       #     mass=mass
-       # )
 
     clustering_over_time = []
 
@@ -132,8 +122,15 @@ def output_clustering(nb_food, reproduction_rate, nb_sharks, mass_fish, food_reg
 
         if time > runtime - 20:
             clustering_over_time.append(get_average_clustering(sea.entities))
+    
+    genes = []
+    for gene_nr in range(5):
+        gene_values = ["Gene %i" %(gene_nr)]
+        for fish in sea.entities:
+            gene_values.append(fish.genes[gene_nr])
+        genes.append(gene_values)
 
         #print("Progress: %i/%i" %(time+1,runtime))
 
-    return mean(clustering_over_time)
+    return (mean(clustering_over_time),genes)
 
