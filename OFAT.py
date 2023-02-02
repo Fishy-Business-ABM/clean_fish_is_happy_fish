@@ -20,15 +20,15 @@ def OFAT(default_values, test_values, nb_iterations, steps_per_iteration):
             print("Value %i" %(i_value))
             values[i_param] = test_values[i_param][i_value]
 
-            outs = []
+            outs = [test_values[i_param][i_value]]
             for _ in range(nb_iterations):
                 outs.append(output_clustering(*values, steps_per_iteration))
                 #print(outs[-1])
-            avg = mean(outs)
+            #avg = mean(outs)
             #print(avg)
-            var = variance(outs)
-            stats_per_param.append((test_values[i_param][i_value],avg,var))
-        with open(params_to_change[i_param] +".txt", "w") as file:
+            #var = variance(outs)
+            stats_per_param.append(outs)
+        with open(params_to_change[i_param] +"_full.txt", "w") as file:
             file.write(params_to_change[i_param]+ "\n")
             file.write(str(stats_per_param))
         stats.append(stats_per_param)
