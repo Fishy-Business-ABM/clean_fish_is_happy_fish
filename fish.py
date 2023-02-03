@@ -212,9 +212,8 @@ class Fish(Agent):
 
         return child_genes
 
-    def mutate(genes):
-        if random.random() < 0.1:
-            genes[random.randint(0,len(genes) - 1)] *= random.uniform(0.9,1.1)
+    def mutate(self, genes):
+        genes[random.randint(0,len(genes) - 1)] += random.uniform(-1,1)
         return genes
 
     def reproduce(self):
@@ -224,6 +223,7 @@ class Fish(Agent):
         neighbors = list(self.neighbors)
         partner = random.randint(0,len(self.neighbors)-1)
         child_genes = self.recombine_genes(neighbors[partner][0])
+        child_genes = self.mutate(child_genes)
 
         Fish(
             self.model,
