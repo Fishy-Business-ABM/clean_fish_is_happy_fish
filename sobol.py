@@ -15,12 +15,12 @@ problem = {
     'names': ["food","reproduction","nb_sharks","mass_fish","regrowth_rate"],
     'bounds': [[1, 50], [0.001, 0.1], [1, 10], [0.00001, 0.001], [0.001, 0.01]]
 }
-n_outputs = 2
+n_outputs = 1
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 2
-max_steps = 10
-distinct_samples = 2
+replicates = 10
+max_steps = 1000
+distinct_samples = 10
 
 # We get all our samples here
 param_values = sobol.sample(problem, distinct_samples, calc_second_order=False)

@@ -5,7 +5,7 @@ from shark import Shark
 from random import random, normalvariate
 from math import trunc
 import numpy as np
-from clustering_coeff import get_average_clustering
+from flocking_index import flocking_index
 from shark_automaton import SharkAutomaton
 
 from statistics import mean
@@ -115,13 +115,21 @@ def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_
                 max_hunting_speed=15
             )
 
-    clustering_over_time = []
+    flocking_over_time = []
 
     for time in range(runtime):
         sea.step()
 
-        if time > runtime - 100 and time % 10 == 0:
-            clustering_over_time.append(get_average_clustering(sea.entities))
+        if time % 10 == 0:
+            index = flocking_index(sea)
+            if index != None:
+                flocking_over_time.append(index)
+    
+    if flocking_over_time == [None] * len(flocking_over_time):
+        flocking = None
+    else:
+        flocking = mean(flocking_over_time)
+    print(flocking)
     
     # genes = []
     # for gene_nr in range(5):
@@ -132,5 +140,5 @@ def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_
 
         #print("Progress: %i/%i" %(time+1,runtime))
 
-    return [mean(clustering_over_time),mean(clustering_over_time)]
+    return [flocking]
 
