@@ -22,7 +22,7 @@ class Fish(Agent):
         perception: float,
         mass: float,
         reproduction_rate: float,
-        genes: List[float]
+        genes: List[float],
     ):
         super(Fish, self).__init__(pos)
 
