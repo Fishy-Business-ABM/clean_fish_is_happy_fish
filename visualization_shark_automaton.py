@@ -39,6 +39,7 @@ for _ in range(n_fish):
             perception=perception,
             mass=0.0001,
             genes=[1,1,1,2,5],
+            reproduction_rate=0.01,
         )
 
 SharkAutomaton(
