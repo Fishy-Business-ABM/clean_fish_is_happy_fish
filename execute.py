@@ -132,5 +132,5 @@ def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_
 
         #print("Progress: %i/%i" %(time+1,runtime))
 
-    return [mean(clustering_over_time)]
+    return [mean(clustering_over_time),mean(clustering_over_time)]
 
