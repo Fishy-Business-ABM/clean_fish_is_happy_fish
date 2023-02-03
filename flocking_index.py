@@ -64,7 +64,7 @@ def angle_between(v1, v2):
     return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
 
 def flocking_index(model) -> float:
-    gamma =20
+    gamma = 0.05
     delta = 0.5
     m = 20
     fish = np.array(list(model.entities))
