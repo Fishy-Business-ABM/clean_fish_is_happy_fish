@@ -86,7 +86,7 @@ def execute(nb_food, nb_initial_fish, nb_sharks, mass_fish, food_regrowth_rate, 
 
     return (out_food, out_fish, out_shark)
 
-def output_clustering(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_rate, runtime):
+def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_rate, runtime):
     sea = Model(width, height)
 
     for _ in range(nb_food):
@@ -120,17 +120,17 @@ def output_clustering(nb_food, reproduction_rate, nb_sharks, mass_fish, food_reg
     for time in range(runtime):
         sea.step()
 
-        if time > runtime - 20:
+        if time > runtime - 100 and time % 10 == 0:
             clustering_over_time.append(get_average_clustering(sea.entities))
     
-    genes = []
-    for gene_nr in range(5):
-        gene_values = ["Gene %i" %(gene_nr)]
-        for fish in sea.entities:
-            gene_values.append(fish.genes[gene_nr])
-        genes.append(gene_values)
+    # genes = []
+    # for gene_nr in range(5):
+    #     gene_values = ["Gene %i" %(gene_nr)]
+    #     for fish in sea.entities:
+    #         gene_values.append(fish.genes[gene_nr])
+    #     genes.append(gene_values)
 
         #print("Progress: %i/%i" %(time+1,runtime))
 
-    return (mean(clustering_over_time),genes)
+    return [mean(clustering_over_time)]
 
