@@ -8,6 +8,8 @@ neovim = "*"
 typing = "*"
 matplotlib = "*"
 p5 = "*"
+networkx = "*"
+pandas = "*"
 
 [dev-packages]
 

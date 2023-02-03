@@ -1,94 +1,51 @@
-from IPython.display import clear_output
-import SALib
-from SALib.sample import saltelli
-from mesa.batchrunner import BatchRunner
-from SALib.analyze import sobol
-import pandas as pd
+from execute import output_clustering
+from copy import copy
+from statistics import mean, variance
 import numpy as np
-import matplotlib.pyplot as plt
-from itertools import combinations
-from clustering_coeff import get_average_clustering
-from model import Model
+import pandas as pd
 
 
-# We define our variables and bounds
-problem = {
-    'num_vars': 5,
-    'names': ['nb_food', 'nb_initial_fish', 'nb_sharks', 'mass_fish', 'food_regrowth_rate'],
-    'bounds': [[0, 2], [2, 10], [1, 2], [0.0001,0.0002], [0.001,0.01]]
-}
+params_to_change = ["food","reproduction","nb_sharks","mass_fish","regrowth_rate"]
 
-# Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 5
-max_steps = 100
-distinct_samples = 5 
+def OFAT(default_values, test_values, nb_iterations, steps_per_iteration):
+    assert len(default_values) == len(test_values)
 
-# Set the outputs
-model_reporters = {"Clustering coefficient": lambda m: get_average_clustering(m.entities)}
+    stats = []
 
-data = {}
+    for i_param in range(len(default_values)):
+        print("Parameter %i" %(i_param))
+        values = copy(default_values)
+        stats_per_param = []
+        for i_value in range(len(test_values[i_param])):
+            print("Value %i" %(i_value))
+            values[i_param] = test_values[i_param][i_value]
 
-for i, var in enumerate(problem['names']):
-    # Get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
-    samples = np.linspace(*problem['bounds'][i], num=distinct_samples)
+            outs = [test_values[i_param][i_value]]
+            for _ in range(nb_iterations):
+                outs.append(output_clustering(*values, steps_per_iteration))
+                #print(outs[-1])
+            #avg = mean(outs)
+            #print(avg)
+            #var = variance(outs)
+            stats_per_param.append(outs)
+        with open(params_to_change[i_param] +"_full2.txt", "w") as file:
+            file.write(params_to_change[i_param]+ "\n")
+            file.write(str(stats_per_param))
+        stats.append(stats_per_param)
+
     
-    # Keep in mind that wolf_gain_from_food should be integers. You will have to change
-    # your code to acommodate for this or sample in such a way that you only get integers.
-    if var == 'nb_food':
-        samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
-    if var == 'nb_initial_fish':
-        samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
-    if var == 'nb_sharks':
-        samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
-    
-    batch = BatchRunner(Model, 
-                        max_steps=max_steps,
-                        iterations=replicates,
-                        variable_parameters={var: samples},
-                        model_reporters=model_reporters,
-                        display_progress=True)
-    
-    batch.run_all()
-    
-    data[var] = batch.get_model_vars_dataframe()
+    return stats
 
-def plot_param_var_conf(ax, df, var, param, i):
-    """
-    Helper function for plot_all_vars. Plots the individual parameter vs
-    variables passed.
+print(OFAT([30,                             # default nb_food
+            0.01,                           # default reproduction rate
+            3,                              # default nb_sharks
+            0.0001,                         # default mass_fish
+            0.005],                         # default regrowth_rate
+            [range(10,50,5),                # test values nb_food
+            np.arange(0.005,0.05,0.005),    # test values reproduction
+            range(1,5,1),                   # test values nb_sharks
+            np.arange(0.00001,0.001,0.0001),# test values mass_fish
+            np.arange(0.001,0.01,0.001)],   # test values regrowth_rate
+            30,                             # nb_iterations
+            1000))                          # steps_per_iteration
 
-    Args:
-        ax: the axis to plot to
-        df: dataframe that holds the data to be plotted
-        var: variables to be taken from the dataframe
-        param: which output variable to plot
-    """
-    x = df.groupby(var).mean().reset_index()[var]
-    y = df.groupby(var).mean()[param]
-
-    replicates = df.groupby(var)[param].count()
-    err = (1.96 * df.groupby(var)[param].std()) / np.sqrt(replicates)
-
-    ax.plot(x, y, c='k')
-    ax.fill_between(x, y - err, y + err)
-
-    ax.set_xlabel(var)
-    ax.set_ylabel(param)
-
-def plot_all_vars(df, param):
-    """
-    Plots the parameters passed vs each of the output variables.
-
-    Args:
-        df: dataframe that holds all data
-        param: the parameter to be plotted
-    """
-
-    f, axs = plt.subplots(3, figsize=(7, 10))
-    
-    for i, var in enumerate(problem['names']):
-        plot_param_var_conf(axs[i], data[var], var, param, i)
-
-for param in ('Sheep', 'Wolves'):
-    plot_all_vars(data, param)
-    plt.show()
