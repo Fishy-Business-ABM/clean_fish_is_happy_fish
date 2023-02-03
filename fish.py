@@ -52,8 +52,8 @@ class Fish(Agent):
         self.eat_radius = 0.1 * perception
         
         # individual-related values
-        self.align_weight = genes[0]
-        self.cohesion_weight = genes[1]
+        self.cohesion_weight = genes[0]
+        self.align_weight = genes[1]
         self.separation_weight = genes[2]
         self.avoid_shark_weight = genes[3]
         self.towards_food_weight = genes[4]
@@ -213,7 +213,10 @@ class Fish(Agent):
         return child_genes
 
     def mutate(self, genes):
-        genes[random.randint(0,len(genes) - 1)] += random.uniform(-1,1)
+        random_gene_nr = random.randint(0,len(genes) - 1)
+        genes[random_gene_nr] += random.uniform(-0.1,0.1)
+        if genes[random_gene_nr] < 0:
+            genes[random_gene_nr] = 0
         return genes
 
     def reproduce(self):

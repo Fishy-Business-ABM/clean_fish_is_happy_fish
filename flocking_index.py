@@ -66,7 +66,7 @@ def angle_between(v1, v2):
 def flocking_index(model) -> float:
     if len(model.entities) < 2:
         return None
-    gamma = 5
+    gamma = 0.05
     delta = 0.5
     m = 20
     fish = np.array(list(model.entities))
@@ -82,7 +82,3 @@ def flocking_index(model) -> float:
 
     flocking_index =1/(N*(N-1)/2)* sum((pairwise_heading*pairwise_distance)[np.triu_indices(N,k=1)])
     return flocking_index
-
-     
-
-
