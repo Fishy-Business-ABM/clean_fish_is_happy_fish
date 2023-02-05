@@ -18,9 +18,9 @@ problem = {
 n_outputs = 1
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 10
+replicates = 20
 max_steps = 1000
-distinct_samples = 10
+distinct_samples = 20
 
 # We get all our samples here
 param_values = sobol.sample(problem, distinct_samples, calc_second_order=False)
@@ -54,7 +54,7 @@ Si_list = []
 for i in range(n_outputs):
     print('\nData for variable ' + str(i) + ':')
     Si_list.append(sb.analyze(problem, data['Variable ' + str(i)].values,
-                                print_to_console=True, calc_second_order=False))
+                                print_to_console=True, calc_second_order=False,parallel=True,n_processors=6))
 
 def plot_index(s, params, i, title=''):
     """

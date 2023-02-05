@@ -10,6 +10,8 @@ matplotlib = "*"
 p5 = "*"
 networkx = "*"
 pandas = "*"
+salib = "*"
+mesa = "*"
 
 [dev-packages]
 

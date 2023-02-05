@@ -12,8 +12,8 @@ from statistics import mean
 
 
 # Model parameters
-width = 10000
-height = 10000
+width = 1000
+height = 1000
 
 # Fish parameters
 perception_fish = 75
