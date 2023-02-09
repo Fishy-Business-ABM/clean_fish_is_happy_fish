@@ -88,7 +88,7 @@ mass = 0.2
 
 #     return (out_food, out_fish, out_shark)
 
-def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_rate, runtime, output_genes=False, output_flocking=False):
+def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_rate, runtime, output_genes=True, output_flocking=True):
     sea = Model(width, height)
 
     for _ in range(nb_food):
@@ -172,6 +172,8 @@ def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_
             else:
                 out.append(mean(gene_values))
                 out.append(np.std(gene_values))
+
+    out.append(len(sea.entities))
     
     return out
 

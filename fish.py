@@ -42,7 +42,7 @@ class Fish(Agent):
         self.mass = mass
         self.genes = genes
         self.reproduction_rate = reproduction_rate
-        self.lifetime = random.randint(1,100)
+        self.lifetime = random.randint(80,100)
         self.age = 0
 
             # hard coded parameters

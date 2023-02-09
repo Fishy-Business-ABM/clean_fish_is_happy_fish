@@ -11,7 +11,7 @@ def OFAT(default_values, test_values, nb_iterations, steps_per_iteration):
 
     for i_param in range(len(default_values)):
         with open(params_to_change[i_param] +"_full3.txt", "w") as file:
-            file.write("ParameterValue,Gene0_avg,Gene0_std,Gene1_avg,Gene1_std,Gene2_avg,Gene2_std,Gene3_avg,Gene3_std,Gene4_avg,Gene4_std\n")
+            file.write("ParameterValue,flocking index,Gene0_avg,Gene0_std,Gene1_avg,Gene1_std,Gene2_avg,Gene2_std,Gene3_avg,Gene3_std,Gene4_avg,Gene4_std,number_fish\n")
 
             print("Parameter %i" %(i_param))
             values = copy(default_values)
