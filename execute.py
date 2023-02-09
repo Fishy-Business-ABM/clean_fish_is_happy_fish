@@ -149,8 +149,7 @@ def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_
         # if time % 10 == 0:
         #     plot_gene_distribution(sea.entities)
         if output_flocking:
-            if time % 10 == 0:
-                print("hallo")
+            if time % 100 == 0:
                 index = flocking_index(sea)
                 if index != None:
                     flocking_over_time.append(index)

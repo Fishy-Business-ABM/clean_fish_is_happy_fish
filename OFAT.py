@@ -37,6 +37,6 @@ OFAT([30,                             # default nb_food
       range(1,5,1),                   # test values nb_sharks
       np.arange(0.00001,0.001,0.0001),# test values mass_fish
       np.arange(0.001,0.01,0.001)],   # test values regrowth_rate
-     2,                             # nb_iterations
-     10)                           # steps_per_iteration
+     10,                             # nb_iterations
+     1000)                           # steps_per_iteration
 
