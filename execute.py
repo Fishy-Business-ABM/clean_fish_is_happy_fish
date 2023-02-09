@@ -149,7 +149,7 @@ def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_
         # if time % 10 == 0:
         #     plot_gene_distribution(sea.entities)
         if output_flocking:
-            if time % 10 == 0:
+            if time % 100 == 0:
                 index = flocking_index(sea)
                 if index != None:
                     flocking_over_time.append(index)
@@ -179,19 +179,19 @@ def output_data(nb_food, reproduction_rate, nb_sharks, mass_fish, food_regrowth_
 
 to_plot = [[],[],[],[],[]]
 
-for i in range(20):
-    print(i)
-    avgs = []
-    out = output_data(20,0.03,15,0.0002,0.005,400,output_genes=True)
-    for j in range(0,len(out),2):
-        avgs.append(out[j])
-    avgs = normalize(avgs)
-    for j in range(5):
-        to_plot[j].append(avgs[j])
-
-bottoms = [0 for _ in to_plot[0]]
-for i in range(len(to_plot)):
-    plt.bar(range(len(to_plot[i])),to_plot[i],bottom=bottoms)
-    for j in range(len(bottoms)):
-        bottoms[j] += to_plot[i][j]
-plt.show()
+#for i in range(20):
+#    print(i)
+#    avgs = []
+#    out = output_data(20,0.03,15,0.0002,0.005,400,output_genes=True)
+#    for j in range(0,len(out),2):
+#        avgs.append(out[j])
+#    avgs = normalize(avgs)
+#    for j in range(5):
+#        to_plot[j].append(avgs[j])
+#
+#bottoms = [0 for _ in to_plot[0]]
+#for i in range(len(to_plot)):
+#    plt.bar(range(len(to_plot[i])),to_plot[i],bottom=bottoms)
+#    for j in range(len(bottoms)):
+#        bottoms[j] += to_plot[i][j]
+#plt.show()

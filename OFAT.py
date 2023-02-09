@@ -28,7 +28,7 @@ def OFAT(default_values, test_values, nb_iterations, steps_per_iteration):
             
 
 OFAT([30,                             # default nb_food
-      0.01,                           # default reproduction rate
+      0.025,                           # default reproduction rate
       3,                              # default nb_sharks
       0.0001,                         # default mass_fish
       0.005],                         # default regrowth_rate
@@ -37,6 +37,6 @@ OFAT([30,                             # default nb_food
       range(1,5,1),                   # test values nb_sharks
       np.arange(0.00001,0.001,0.0001),# test values mass_fish
       np.arange(0.001,0.01,0.001)],   # test values regrowth_rate
-     2,                             # nb_iterations
+     10,                             # nb_iterations
      1000)                           # steps_per_iteration
 
