@@ -42,6 +42,8 @@ class Fish(Agent):
         self.mass = mass
         self.genes = genes
         self.reproduction_rate = reproduction_rate
+        self.lifetime = random.randint(1,100)
+        self.age = 0
 
             # hard coded parameters
         # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
@@ -201,7 +203,7 @@ class Fish(Agent):
     def metabolize(self):
         self.energy -= self.mass * compute_norm(self.velocity) ** 2
 
-        if self.energy <= 0:
+        if self.energy <= 0 or self.age == self.lifetime:
             self.model.remove_entity(self)
 
              
@@ -239,6 +241,7 @@ class Fish(Agent):
 
 
     def step(self):
+        self.age += 1
         self.neighbors = self.model.get_neighbors_w_distance(self, self.perception, False)
 
         if self.energy > 0.5 * self.max_energy and random.random() < self.reproduction_rate:
@@ -274,3 +277,4 @@ class Fish(Agent):
 
         self.eat()
         self.metabolize()
+
