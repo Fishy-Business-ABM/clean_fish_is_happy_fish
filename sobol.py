@@ -15,12 +15,22 @@ problem = {
     'names': ["food","reproduction","nb_sharks","mass_fish","regrowth_rate"],
     'bounds': [[1, 50], [0.001, 0.1], [1, 10], [0.00001, 0.001], [0.001, 0.01]]
 }
-n_outputs = 1
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
 replicates = 10
 max_steps = 1000
 distinct_samples = 10
+
+# Set the outputs of the model
+output_flocking = True
+output_genes = True
+output_number_fish = True
+
+# Count number of outputs
+n_outputs = len(output_data(1, 1, 1, 1, 1, 1,
+                            output_flocking=output_flocking,
+                            output_genes=output_genes,
+                            output_number_fish=output_number_fish))
 
 # We get all our samples here
 param_values = sobol.sample(problem, distinct_samples, calc_second_order=False)
@@ -42,7 +52,10 @@ for i in range(replicates):
         for name, val in zip(problem['names'], vals):
             variable_parameters[name] = val
 
-        iteration_data = output_data(*vals, max_steps)
+        iteration_data = output_data(*vals, max_steps,
+                                     output_flocking=output_flocking,
+                                     output_genes=output_genes,
+                                     output_number_fish=output_number_fish)
         data.iloc[count, 0:problem['num_vars']] = vals
         data.iloc[count, problem['num_vars']:problem['num_vars']+1] = count
         data.iloc[count, problem['num_vars']+1:problem['num_vars']+n_outputs+1] = iteration_data

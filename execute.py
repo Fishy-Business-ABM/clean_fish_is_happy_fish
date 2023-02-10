@@ -54,6 +54,7 @@ def output_data(
     '''
 
     # init model
+
     sea = Model(width, height)
 
     # init food sources
@@ -120,7 +121,7 @@ def output_data(
             else:
                 out.append(mean(gene_values))
                 out.append(np.std(gene_values))
-
-    out.append(len(sea.entities))
+    if output_number_fish:
+        out.append(len(sea.entities))
     
     return out

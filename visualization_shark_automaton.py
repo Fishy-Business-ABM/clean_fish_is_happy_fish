@@ -1,5 +1,6 @@
 from p5 import *
 from fish import Fish
+from flocking_index import flocking_index
 import model
 from random import random, uniform, normalvariate
 from shark_automaton import SharkAutomaton
@@ -11,8 +12,10 @@ dimension = 150
 perception = 75
 n_fish = 30
 initial_max_speed = 10
-width = 500
-height = 500
+
+width = 800
+height = 800
+
 sea = model.Model(width,height)
 
 # for w in range(round(width/4),round(3*width/8),50):
@@ -39,7 +42,7 @@ for _ in range(n_fish):
             pos=pos,
             perception=perception,
             mass=0.0001,
-            genes=[1,1,1,2,5],
+            genes=[1,1,1,1,1],
             reproduction_rate=0.01,
         )
 
@@ -83,6 +86,7 @@ def draw():
         #shark.eat(prey)
         #shark.metabolize()
         shark.step()
+    print(flocking_index(sea))
 
     #plot_gene_distribution(sea.entities, 0)
 
