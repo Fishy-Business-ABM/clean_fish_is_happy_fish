@@ -8,7 +8,13 @@ Generally, Boids rules cause agents to form clusters -- or flocks in the case of
 
 ### Prerequisites
 
-TODO: modules and stuff
+For library managment we used pipenv, therefore all the required python libraries are listed in the Pipfile. If you are also using pipenv you can easily get the correct dependencies by execute the following command.
+```
+pipenv shell
+```
+If one is not using pipenv you will have manully pip install the packages listed in the Pipfile.
+
+
 
 ### Repository
 
@@ -26,7 +32,11 @@ The following files contain the most important parts of the program.
 
 ## Visualization
 
-TODO
+The visualization is done using the p5 library for python. When the command 
+```
+python visualization.py
+```
+is run, a single instance of the model is setup with the fish having fixed genes on a plane of 1000 by 1000. You will see 30 fish as green circles, a single shark as a red square and 8 pieces of food as small red circles. The visualization will continue until the window is closed or until the program is interupted.
 
 ## Sensitivity analysis
 
