@@ -1,6 +1,8 @@
 from util import euclidian_distance
 from copy import copy
 
+from typing import List, Tuple
+
 class Model(object):
     def __init__(self,width,height):
         '''A model is a continuous space in which fish and shark live.
@@ -72,11 +74,11 @@ class Model(object):
         '''
         return self.get_neighboring(entity, radius, is_entity_included, self.entities)
 
-    def add_food(self, food): -> None
+    def add_food(self, food) -> None:
         assert "pos" in food.__dict__ and isinstance(food.pos, tuple)
         self.foods.add(food)
 
-    def start_regrowing(self, food): -> None
+    def start_regrowing(self, food) -> None:
         assert "pos" in food.__dict__ and isinstance(food.pos, tuple)
         self.regrowing_foods.add(food)
 

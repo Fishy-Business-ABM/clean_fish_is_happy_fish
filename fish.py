@@ -76,7 +76,7 @@ class Fish(Agent):
 
             # derived parameters
         self.max_speed = 100000 * self.mass
-        self.energy = 1 * max_energy # initial energy
+        self.energy = 1 * self.max_energy # initial energy
         self.velocity = tuple([random.uniform(-self.max_speed/2, self.max_speed/2) for _ in range(len(pos))]) # initial velocity
         self.eat_radius = 0.1 * perception
         
