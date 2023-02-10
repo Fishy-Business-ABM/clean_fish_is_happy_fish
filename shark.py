@@ -7,6 +7,11 @@ from p5 import stroke, fill, rect
 from util import compute_norm
 
 class Neuron(object):
+	'''A simple Neuron class, output is sigmoid(sum(weight[i] * input_data[i]))
+
+	No backpropagation is implemented because we rely on a GeneticAlgorithm.
+	'''
+
 	def __init__(
 		self,
 		weights,
@@ -30,9 +35,13 @@ class Neuron(object):
 def sigmoid_function(boundary: float, x: float) -> float: # between -boundary and boundary
 	return boundary / (1 + exp(-x))
 
+
 class Shark(Agent):
-	# TODO: constrain shark to boundary
-	"""docstring for Shark"""
+	"""Shark (Neural Network version)
+
+		This shark "sees" a given number of fish positions as well as its own and uses a neural network of depth 1 to decide on an angle and a velocity.
+	"""
+
 	def __init__(
 		self,
 		model: Model,
@@ -95,8 +104,10 @@ class Shark(Agent):
 
 		self.brain = [deep_layer, out_layer]
 
-	# Find bounded number of fish within perception
 	def seeable_prey(self):
+		'''	Find bounded number of fish within perception
+		'''
+
 		prey = list(self.model.get_neighbors_w_distance(self, self.perception, False))
 		prey.sort(key=lambda x: x[1]) # sort them by who is closer
 
@@ -104,48 +115,60 @@ class Shark(Agent):
 
 		return prey
 
-	# Move according to neural net
 	def move(self, prey):
+		'''Move according to neural net that outputs the angle and norm to follow
+		'''
+
+		# get prey positions, fills with 0 if did not find enough preys
 		prey_positions = reduce(lambda acc, elm: acc + [elm[0].pos[0]] + [elm[0].pos[1]], prey, [])
 		prey_positions += [0 for _ in range(2 * self.nb_seeable_fish - len(prey_positions))]
 
-		inputs = list(self.pos) + prey_positions
+		# adds own position as input
+ 		inputs = list(self.pos) + prey_positions
+
+ 		# normalize all input
 		inputs = [inputs[i] / self.model.window[i % 2] for i in range(len(inputs))]
 
+		# compute front-propagation of neural network
 		intermediary_outputs = [inputs]
 		for layer in self.brain:
 			intermediary = [neuron(intermediary_outputs[-1]) for neuron in layer]
 			intermediary_outputs.append(intermediary)
 
+		# get output
 		angle, norm = intermediary_outputs[-1][0], intermediary_outputs[-1][1]
-		
-		# TODO: probably deadcode, remove it later
-		# if norm > self.max_speed: # this is wrong, it should be handled by the sigmoid
-		# 	norm = self.max_speed
 		
 		self.speed = norm
 		self.angle = angle
+
+		# compute new position
 		new_x = self.pos[0] + norm * cos(angle)
 		new_y = self.pos[1] + norm * sin(angle)
 
 		self.pos = (new_x, new_y)
 
-	# Eat potential prey within eating radius
 	def eat(self, prey):
+		'''	Eat potential prey within eating radius
+		'''
+
 		for fish,dist in prey:
 			if dist <= self.eat_radius:
 				print('eat')
 				self.energy += 1
 				self.model.remove_entity(fish)
 
-	# Do metabolism and possibly die
 	def metabolize(self):
+		''' Pay energy cost and may die
+		'''
 		self.energy -= self.mass * self.speed ** 2
 
 		if self.energy < 0:
 			self.model.remove_shark(self)
 
 	def step(self):
+		'''Find prey around, move, eat, pay energy cost
+		'''
+
 		prey = self.seeable_prey()
 
 		self.move(prey)

@@ -2,6 +2,18 @@ from typing import List, Tuple, Optional
 import random
 
 class GeneticAlgorithm(object):
+	'''A generic genetic algorithm
+		
+		We implemented this to train the shark neural network.
+		Genetic algorithm follows 6 steps:
+			1. initialization, the population
+			2. we compute the fitness of every individual in the population
+			3. we select the best individual and remove the worst
+			4. the very best individuals reproduce to replace the worst, through crossover (gene mixing)
+			5. at random, genes of individuals may mutate
+			6. goto step 2
+	'''
+
 	def __init__(
 		self, 
 		population: List[List[any]],
@@ -10,6 +22,15 @@ class GeneticAlgorithm(object):
 		mutate_gene: callable,
 		mutation_rate: float
 	):
+		'''constuctor of the Genetic lgorithm object
+			inputs:
+				* population is a list of individuals that are themselves a list of genes of any type
+				* fitness is a function that takes an individual as input and returns a numeric score
+				* nb_replacement is how many individuals are replaced at every iteration
+				* mutate_gene is a function that given a gene returns another of the same type
+				* mutation_rate is the odds of a mutation occuring
+		'''
+
 		super(GeneticAlgorithm, self).__init__()
 
 		self.population = [(individual, None) for individual in population]

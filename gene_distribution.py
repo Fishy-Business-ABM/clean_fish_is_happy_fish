@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 from copy import copy
 from statistics import mean
 
-def normalize(genes):
+def normalize(genes: List[float]) -> float:
+    '''Normalizes genes so that they can be compared
+    '''
+
     tot = sum(genes)
     if tot == 0:
         normalized = copy(genes)
@@ -12,7 +15,9 @@ def normalize(genes):
         normalized.append(gene/tot)
     return normalized
 
-def plot_gene_distribution(entities):
+def plot_gene_distribution(entities: Set['Fish']) -> None:
+    '''computes and plots normalized gene distribution 
+    '''
     genes = []
     for fish in entities:
         genes.append(normalize(fish.genes))
