@@ -1,6 +1,8 @@
-# Fishy business - An agent-based model of flocking behaviour in fish
+# Fishy Business - An agent-based model of flocking behaviour in fish
 
-TODO: introduction
+Fishy Business is an agent based model that can be used to study the flocking behaviour of fish. It implements a number of fish (recommended: between 30 and 150 fish) that behave according to the Boids rules: each fish observes its local environment and (1) tries to swim towards the center of mass of all neighboring fish, (2) tries to align its velocity with the neighboring fish and (3) avoids bumping into other fish that come too close. Additionally, sources of fish food are present and a shark is hunting the fish.
+
+Generally, Boids rules cause agents to form clusters -- or flocks in the case of fish. Flocking can provide the fish protetion from the shark, but also reduces their chances of finding enough food. A sexual genetic reproduction mechanism is implemented to allow the fish to find a balance between flocking behaviour and individual exploration, by varying the weights of the different Boids rules, attraction to food and repulsion from sharks. As such, the model can be used to simulate fish behaviour under different environment parameters.
 
 ## Getting started
 
