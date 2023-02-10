@@ -61,7 +61,7 @@ for i in range(replicates):
         data.iloc[count, problem['num_vars']+1:problem['num_vars']+n_outputs+1] = iteration_data
         count += 1
 
-        print('%f%% done' %({int(count / (len(param_values) * (replicates)) * 100)}))
+        print(f'{count / (len(param_values) * (replicates)) * 100:.2f}% done')
 
 Si_list = []
 for i in range(n_outputs):
