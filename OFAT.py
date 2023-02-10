@@ -3,6 +3,7 @@ from copy import copy
 from statistics import mean, variance
 import numpy as np
 import pandas as pd
+from typing import List
 
 params_to_change = ["food","reproduction","nb_sharks","mass_fish","regrowth_rate"]
 
@@ -20,6 +21,7 @@ def OFAT(
             2. nb_sharks
             3. mass_fish
             4. regrowth_rate
+            5. number_fish
     '''
 
     assert len(default_values) == len(test_values)

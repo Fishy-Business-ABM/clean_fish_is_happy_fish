@@ -9,6 +9,7 @@ from flocking_index import flocking_index
 from shark_automaton import SharkAutomaton
 from gene_distribution import plot_gene_distribution, normalize
 import matplotlib.pyplot as plt
+from typing import List, Set
 
 from statistics import mean
 
@@ -35,7 +36,9 @@ def output_data(
     food_regrowth_rate: float, 
     runtime: int, 
     output_genes:bool =True, 
-    output_flocking:bool =True) -> List[float]:
+    output_flocking:bool =True,
+    output_number_fish:bool=True
+) -> List[float]:
     '''Runs the experiment and returns the results
 
         The results are: 
@@ -82,8 +85,8 @@ def output_data(
                 perception=PERCEPTION_SHARK,
                 eat_radius=EAT_RADIUS,
                 mass=MASS,
-                MAX_EXPLORATION_SPEED=10,
-                MAX_HUNTING_SPEED=15
+                max_exploration_speed=MAX_EXPLORATION_SPEED,
+                max_hunting_speed=MAX_HUNTING_SPEED
             )
 
     # out will store the result metrics
@@ -109,7 +112,7 @@ def output_data(
             flocking = mean(flocking_over_time)
         out.append(flocking)
     
-    # asked to measure genes, computes average and standard deviation of each gene
+    # if asked to measure genes, computes average and standard deviation of each gene
     if output_genes:
         for gene_nr in range(5):
             gene_values = []
@@ -121,6 +124,8 @@ def output_data(
             else:
                 out.append(mean(gene_values))
                 out.append(np.std(gene_values))
+
+    # if asked to measure number of fish, add number of fish
     if output_number_fish:
         out.append(len(sea.entities))
     

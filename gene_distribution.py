@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from copy import copy
 from statistics import mean
+from typing import List, Set
 
 def normalize(genes: List[float]) -> float:
     '''Normalizes genes so that they can be compared
