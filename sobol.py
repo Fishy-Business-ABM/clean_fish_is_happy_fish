@@ -27,7 +27,7 @@ output_genes = True
 output_number_fish = True
 
 # Count number of outputs
-n_outputs = len(output_data(0, 0, 0, 0, 0, 1,
+n_outputs = len(output_data(1, 1, 1, 1, 1, 1,
                             output_flocking=output_flocking,
                             output_genes=output_genes,
                             output_number_fish=output_number_fish))
