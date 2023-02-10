@@ -4,6 +4,7 @@ import model
 width = 1000
 height = 1000
 
+
 def distance(x):
     D = np.empty((0, len(x)))
     for point in x:

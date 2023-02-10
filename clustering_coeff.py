@@ -1,7 +1,7 @@
 import random
 from model import Model
 from fish import Fish
-from typing import Set, List, Optional
+from typing import Set, List, Optional, Tuple
 from util import euclidian_distance
 from functools import reduce
 import networkx as nx
