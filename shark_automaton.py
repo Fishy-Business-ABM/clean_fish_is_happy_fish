@@ -48,7 +48,7 @@ class SharkAutomaton(Agent):
     
     def explore(self) -> None:
 
-        d_angle = (random() - 0.5) * 0.1 * pi
+        d_angle = (random() - 0.5) * 0.2 * pi
         self.angle += d_angle
 
         dx = cos(self.angle) * self.max_exploration_speed
@@ -65,7 +65,7 @@ class SharkAutomaton(Agent):
         dx = pos2[0] - pos1[0]
         dy = pos2[1] - pos1[1]
 
-        return pi/2 - atan(dy/dx)
+        return -atan(dy/dx)
 
     def hunt(self, target) -> None:
         dist_to_target = target[1]

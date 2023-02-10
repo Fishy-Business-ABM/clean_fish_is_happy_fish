@@ -1,3 +1,4 @@
+
 # Fishy Business - An agent-based model of flocking behaviour in fish
 
 Fishy Business is an agent based model that can be used to study the flocking behaviour of fish. It implements a number of fish (recommended: between 30 and 150 fish) that behave according to the Boids rules: each fish observes its local environment and (1) tries to swim towards the center of mass of all neighboring fish, (2) tries to align its velocity with the neighboring fish and (3) avoids bumping into other fish that come too close. Additionally, sources of fish food are present and a shark is hunting the fish.
@@ -70,3 +71,4 @@ To run the GSA, execute the following command.
 python sobol.py
 ```
 Your machine will now create a Sobol sequence (i.e., a quasi-random set of point in the input parameter space) and execute the model 10 times for 1000 steps for each parameter setting in the Sobol sequence. It repeats this process 10 times and stores the output variables. Afterwards, the SALib module is called to analyse the data and two plots are generated for each output variable: the first order index and the total order index. During the analysis, the program prints its progress in your terminal.
+

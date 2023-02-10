@@ -134,6 +134,7 @@ class Shark(Agent):
 	def eat(self, prey):
 		for fish,dist in prey:
 			if dist <= self.eat_radius:
+				print('eat')
 				self.energy += 1
 				self.model.remove_entity(fish)
 
