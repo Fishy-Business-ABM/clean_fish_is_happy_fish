@@ -1,41 +1,8 @@
 import numpy as np
 from numpy._typing import NDArray
 import model
-from fish import Fish
 width = 1000
 height = 1000
-
-sea = model.Model(width, height)
-pos2 = (0, 0)
-vel2 = (1, 0)
-pos1 = (0, 0)
-vel1 = (1, 0)
-
-Fish(
-    model=sea,
-    pos=(15, 15),
-    perception=1,
-    mass=1,
-    reproduction_rate=1,
-    genes=[0, 0, 0, 0, 0],
-)
-Fish(
-    model=sea,
-    pos=pos1,
-    perception=1,
-    mass=1,
-    reproduction_rate=1,
-    genes=[0, 0, 0, 0, 0],
-)
-Fish(
-    model=sea,
-    pos=pos2,
-    perception=1,
-    mass=1,
-    reproduction_rate=1,
-    genes=[0, 0, 0, 0, 0],
-)
-
 
 def distance(x):
     D = np.empty((0, len(x)))
@@ -67,7 +34,11 @@ def angle_between(v1, v2):
 
 
 def flocking_index(model) -> float:
+    """Flocking index calculated as in the paper referenced in the report. With gamma set to a low number to smooth out
+       the cutoff for when a fish is considered part of a flock slightly."""
+
     gamma = 0.05
+
     if len(model.entities) < 2:
         return None
 
