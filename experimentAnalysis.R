@@ -3,11 +3,11 @@ library(tidyverse)
 
 ### Analyzing flocking index
 
-food_data_genes <- read.csv("/Users/Jonee/Documents/GitHub/clean_fish_is_happy_fish/results/food_full3.txt")
-mass_data_genes <- read.csv("/Users/Jonee/Documents/GitHub/clean_fish_is_happy_fish/results/mass_fish_full3.txt")
-n_sharks_data_genes <- read.csv("/Users/Jonee/Documents/GitHub/clean_fish_is_happy_fish/results/nb_sharks_full3.txt")
-regrowth_data_genes <- read.csv("/Users/Jonee/Documents/GitHub/clean_fish_is_happy_fish/results/regrowth_rate_full3.txt")
-reproduction_data_genes <- read.csv("/Users/Jonee/Documents/GitHub/clean_fish_is_happy_fish/results/reproduction_full3.txt")
+food_data_genes <- read.csv("results/food_full3.txt")
+mass_data_genes <- read.csv("results/mass_fish_full3.txt")
+n_sharks_data_genes <- read.csv("results/nb_sharks_full3.txt")
+regrowth_data_genes <- read.csv("results/regrowth_rate_full3.txt")
+reproduction_data_genes <- read.csv("results/reproduction_full3.txt")
 
 all_data <- list(food_data_genes, mass_data_genes, n_sharks_data_genes, regrowth_data_genes, reproduction_data_genes)
 plot_names <- c("n_food", "mass", "n_sharks", "regrowth", "reproduction_rate")
