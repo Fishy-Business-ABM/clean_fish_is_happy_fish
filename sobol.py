@@ -42,13 +42,13 @@ for i in range(replicates):
         for name, val in zip(problem['names'], vals):
             variable_parameters[name] = val
 
-        iteration_data = output_data(*vals, max_steps)
+        iteration_data = output_data(vals[0], vals[1], vals[2], vals[3], vals[4], max_steps, output_flocking=True, output_genes=True)
         data.iloc[count, 0:problem['num_vars']] = vals
         data.iloc[count, problem['num_vars']:problem['num_vars']+1] = count
         data.iloc[count, problem['num_vars']+1:problem['num_vars']+n_outputs+1] = iteration_data
         count += 1
 
-        print(f'{count / (len(param_values) * (replicates)) * 100:.2f}% done')
+        print('%f%% done' %({int(count / (len(param_values) * (replicates)) * 100)}))
 
 Si_list = []
 for i in range(n_outputs):
