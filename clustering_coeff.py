@@ -3,7 +3,19 @@ from util import euclidian_distance
 from functools import reduce
 import networkx as nx
 
-def convert_to_graph(fish: Set[any]) -> List[List[float]]:
+""" A clustering coefficient is a measure of how close a graph is to a clique
+
+This file implements various utilities to compute different clustering coefficients.
+"""
+
+
+def convert_to_graph(fish: Set['Fish']) -> List[List[float]]:
+    """Converts a set of entities to the matrix representation of a graph
+
+        The graph is undirected ([i][j] == [j][i]) and weighted.
+        The weights are the distance between each couple of entities.
+    """
+
     entities = list(fish)
     out = [[0 for _ in range(len(entities))] for _ in range(len(entities))]
     for i in range(len(entities)):
@@ -14,7 +26,14 @@ def convert_to_graph(fish: Set[any]) -> List[List[float]]:
     return out
 
 
-def build_neighborhood_graph(fish: Set[any]) -> List[List[Optional[float]]]:
+def build_neighborhood_graph(fish: Set['Fish']) -> List[List[float]]:
+    """Converts a set of fish into the matrix representation of a neighborhood graph
+    
+        The neighborhood graph is caracterized by having an infinite distance between two fish that are not within perception reach of each other.
+        The graph is undirected ([i][j] == [j][i]) and weighted.
+        The weights are the distance between each couple of entities if not infinity.
+    """
+
     entities = list(fish)
     out = [[None for _ in range(len(entities))] for _ in range(len(entities))]
     for i in range(len(entities)):
@@ -25,7 +44,13 @@ def build_neighborhood_graph(fish: Set[any]) -> List[List[Optional[float]]]:
             out[j][i] = out[i][j]
     return out
 
-def split_disjoint_graphs(graph):
+def split_disjoint_graphs(graph: List[List[float]]) -> List[List[int]]:
+    """Returns the list of disjoint subgraphs within input graph
+    
+        Two graphs are disjoint if they share no edge that is not None and not infinitely-weighted.
+        A disjoint subgraph is represented a list of node indices within the input graph.
+    """
+
     clusters = []
     visited = set()
 
@@ -47,18 +72,32 @@ def split_disjoint_graphs(graph):
         clusters.append(current_cluster)
     return clusters
 
-def get_perception_clusters(entities: List[any]):
-    '''
+def get_perception_clusters(entities: Set['Fish']) -> (List[List[int]], List[List[float]]):
+    '''Converts a set of Fish into a list of disjoint neighborhood graphs
+
+        Each neighborhood graph is a graph of fish within perception range of each other.
+
         We can use the output values of this to count the number of clusters
         and the number of nodes in them if we want, it also returns the graph
         to read the distances if needed
     '''
+
     neighborhood_graph = build_neighborhood_graph(entities)
     clusters = split_disjoint_graphs(neighborhood_graph)
     return (clusters, neighborhood_graph)
 
-def get_perception_clusters_w_clustering_coefficient(entities: List[any]):
+def get_perception_clusters_w_clustering_coefficient(entities: Set['Fish']) -> List[Tuple[List[int], float]]:
+    '''Converts a set of Fish into a list of disjoint neighborhood graphs and computes the clustering coefficient of each
+
+        Each neighborhood graph is a graph of fish within perception range of each other.
+
+        We can use the output values of this to count the number of clusters
+        and the number of nodes in them if we want, it also returns the graph
+        to read the distances if needed
+    '''
     def __convert_cluster_to_nx_graph(cluster, og_graph):
+        '''Auxiliary function to convert a graph into its Networkx representation
+        '''
         edge_pairs = []
         for i in cluster:
             for j in cluster:
@@ -79,7 +118,10 @@ def get_perception_clusters_w_clustering_coefficient(entities: List[any]):
 
     return clusters_w_clustering_k
 
-def get_average_clustering(entity: Set[any]):
+def get_average_clustering(entity: Set['Fish']) -> float:
+    '''returns clustering coefficient of entire graph
+    '''
+
     if len(entity) == 0:
         return 0
     graph = convert_to_graph(entity)
