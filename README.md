@@ -30,6 +30,7 @@ The following files contain the most important parts of the program.
 - **sobol.py**: contains code to run a Global Sensitivity Analysis. It writes the output to a .txt file.
 - **plots**: contains a number of plots regarding the learned behaviour of the fish.
 - **results**: contains the sensitivity analysis data used to generate the plots.
+- **main**: contains all unit and fuzzy tests
 
 ## Visualization
 
