@@ -43,6 +43,8 @@ for i in range(replicates):
             variable_parameters[name] = val
 
         iteration_data = output_data(*vals, max_steps, output_flocking=True, output_genes=True)
+        assert len(iteration_data) == n_outputs
+        assert len(data) == problem['num_vars']+n_outputs+1
         data.iloc[count, 0:problem['num_vars']] = vals
         data.iloc[count, problem['num_vars']:problem['num_vars']+1] = count
         data.iloc[count, problem['num_vars']+1:problem['num_vars']+n_outputs+1] = iteration_data
