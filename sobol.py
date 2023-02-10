@@ -12,27 +12,38 @@ import matplotlib.pyplot as plt
 
 problem = {
     'num_vars': 5,
-    'names': ["food","reproduction","nb_sharks","mass_fish","regrowth_rate"],
+    'names': ["food", "reproduction", "nb_sharks", "mass_fish", "regrowth_rate"],
     'bounds': [[1, 50], [0.001, 0.1], [1, 10], [0.00001, 0.001], [0.001, 0.01]]
 }
-n_outputs = 1
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
 replicates = 10
 max_steps = 1000
 distinct_samples = 10
 
+# Set the outputs of the model
+output_flocking = True
+output_genes = True
+output_number_fish = True
+
+# Count number of outputs
+n_outputs = len(output_data(1, 1, 1, 1, 1, 1,
+                            output_flocking=output_flocking,
+                            output_genes=output_genes,
+                            output_number_fish=output_number_fish))
+
 # We get all our samples here
 param_values = sobol.sample(problem, distinct_samples, calc_second_order=False)
 
 count = 0
-data = pd.DataFrame(index=range(replicates*len(param_values)), columns=problem["names"])
+data = pd.DataFrame(index=range(
+    replicates*len(param_values)), columns=problem["names"])
 data['Run'] = None
 for i in range(n_outputs):
     data['Variable ' + str(i)] = None
 
 for i in range(replicates):
-    for vals in param_values: 
+    for vals in param_values:
         # Change parameters that should be integers
         vals = list(vals)
         vals[0] = int(vals[0])
@@ -42,10 +53,14 @@ for i in range(replicates):
         for name, val in zip(problem['names'], vals):
             variable_parameters[name] = val
 
-        iteration_data = output_data(*vals, max_steps)
+        iteration_data = output_data(*vals, max_steps,
+                                     output_flocking=output_flocking,
+                                     output_genes=output_genes,
+                                     output_number_fish=output_number_fish)
         data.iloc[count, 0:problem['num_vars']] = vals
         data.iloc[count, problem['num_vars']:problem['num_vars']+1] = count
-        data.iloc[count, problem['num_vars']+1:problem['num_vars']+n_outputs+1] = iteration_data
+        data.iloc[count, problem['num_vars'] +
+                  1:problem['num_vars']+n_outputs+1] = iteration_data
         count += 1
 
         print(f'{count / (len(param_values) * (replicates)) * 100:.2f}% done')
@@ -54,7 +69,8 @@ Si_list = []
 for i in range(n_outputs):
     print('\nData for variable ' + str(i) + ':')
     Si_list.append(sb.analyze(problem, data['Variable ' + str(i)].values,
-                                print_to_console=True, calc_second_order=False))
+                              print_to_console=True, calc_second_order=False))
+
 
 def plot_index(s, params, i, title=''):
     """
@@ -81,10 +97,12 @@ def plot_index(s, params, i, title=''):
     plt.errorbar(indices, range(l), xerr=errors, linestyle='None', marker='o')
     plt.axvline(0, c='k')
 
+
 for i in range(n_outputs):
-    plot_index(Si_list[i], problem['names'], '1', 'First order sensitivity: variable ' + str(i))
+    plot_index(Si_list[i], problem['names'], '1',
+               'First order sensitivity: variable ' + str(i))
     plt.show()
 
-    plot_index(Si_list[i], problem['names'], 'T', 'Total order sensitivity: variable ' + str(i))
+    plot_index(Si_list[i], problem['names'], 'T',
+               'Total order sensitivity: variable ' + str(i))
     plt.show()
-    

@@ -1,3 +1,4 @@
+
 # Fishy Business - An agent-based model of flocking behaviour in fish
 
 Fishy Business is an agent based model that can be used to study the flocking behaviour of fish. It implements a number of fish (recommended: between 30 and 150 fish) that behave according to the Boids rules: each fish observes its local environment and (1) tries to swim towards the center of mass of all neighboring fish, (2) tries to align its velocity with the neighboring fish and (3) avoids bumping into other fish that come too close. Additionally, sources of fish food are present and a shark is hunting the fish.
@@ -22,19 +23,20 @@ The following files contain the most important parts of the program.
 - **model.py**: describes the environment of the ABM. It contains code to add and remove agents (i.e., fish and sharks), to update environment elements (e.g., regrowing food) and to step the model.
 - **food.py**: contains code that defines how the fish's food sources regrow.
 - **fish.py**: describes the behaviour of the fish. It contains movement rules (i.e., Boids rules, attraction to food and repulsion from sharks), a sexual reproduction mechanism and metabolism.
-- **shark.py**: describes the behaviour of the sharks. It contains movement rules (i.e., a direction-constrained random walk if no fish is in sight, and attraction to the closest fish otherwise) and removes fish that are being eaten.
+- **shark_automaton.py**: describes the behaviour of the sharks. It contains movement rules (i.e., a direction-constrained random walk if no fish is in sight, and attraction to the closest fish otherwise) and removes fish that are being eaten.
 - **execute.py**: contains a function that runs the model for a given number of iterations, with a number of model parameters as input and parameterized output variables of the model.
 - **visualization.py**: contains a visualization of the model that runs and visualizes in real-time.
 - **OFAT.py**: contains code to run a One Factor at a Time analysis of the model. It writes the output to a .txt file.
 - **sobol.py**: contains code to run a Global Sensitivity Analysis. It writes the output to a .txt file.
 - **plots**: contains a number of plots regarding the learned behaviour of the fish.
 - **results**: contains the sensitivity analysis data used to generate the plots.
+- **main**: contains all unit and fuzzy tests
 
 ## Visualization
 
 The visualization is done using the p5 library for python. When the command 
 ```
-python visualization.py
+python visualization_shark_automaton.py
 ```
 is run, a single instance of the model is setup with the fish having fixed genes on a plane of 1000 by 1000. You will see 30 fish as green circles, a single shark as a red square and 8 pieces of food as small red circles. The visualization will continue until the window is closed or until the program is interupted.
 
@@ -48,7 +50,9 @@ The One Factor at a Time (OFAT) analysis takes into account the following five i
 - Number of sharks
 - Mass of the fish (the higher the mass, the faster the fish can swim and the more energy it loses per step)
 - Regrowth rate of the food
+
 And it outputs the following variables:
+
 - An estimate of the flocking index over the last 100 steps of the model.
 - The genes of all fish, representing the learned behaviour of the fish.
 - The number of fish present at the end of the model execution.
@@ -59,7 +63,12 @@ python OFAT.py
 ```
 Your machine will now fix the last four parameters, and vary the first parameter. For each value of the first parameter, it runs the model 10 times for 1000 steps and write the output variables to a .txt file in the Results directory. Consequently, it fixes parameters 1 and 3-5 and varies parameter 2, etcetera until all parameters have been analysed. During the analysis, the program prints the progress in your terminal by stating which parameter it is varying and what value it is currently giving to the parameter.
 
-TODO: how to make plots
+To code for the plots can be found in
+```
+experimentAnalysis.R
+```
+
+To run this file, you will need R (https://www.r-project.org/) installed on your machine. 
 
 ### Global Sensitivity Analysis
 
@@ -70,3 +79,4 @@ To run the GSA, execute the following command.
 python sobol.py
 ```
 Your machine will now create a Sobol sequence (i.e., a quasi-random set of point in the input parameter space) and execute the model 10 times for 1000 steps for each parameter setting in the Sobol sequence. It repeats this process 10 times and stores the output variables. Afterwards, the SALib module is called to analyse the data and two plots are generated for each output variable: the first order index and the total order index. During the analysis, the program prints its progress in your terminal.
+
