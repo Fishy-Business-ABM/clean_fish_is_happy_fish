@@ -6,13 +6,16 @@ from random import random, uniform, normalvariate
 from shark_automaton import SharkAutomaton
 from copy import copy
 from food import Food
+from gene_distribution import plot_gene_distribution
 
 dimension = 150
 perception = 75
 n_fish = 30
 initial_max_speed = 10
+
 width = 800
 height = 800
+
 sea = model.Model(width,height)
 
 # for w in range(round(width/4),round(3*width/8),50):
@@ -32,7 +35,7 @@ Food(sea, (0.6 * width, 0.4 * height), 0.005)
 Food(sea, (0.4 * width, 0.4 * height), 0.005)
 
 for _ in range(n_fish):
-    pos = (uniform(width/2 - dimension, width/2 + dimension),uniform(height/2 - dimension, height/2 + dimension))
+    pos = (uniform(0, width),uniform(0, height))
     vel = (uniform(-initial_max_speed,initial_max_speed), uniform(-initial_max_speed,initial_max_speed))
     fish = Fish(
             model=sea,
@@ -84,6 +87,8 @@ def draw():
         #shark.metabolize()
         shark.step()
     print(flocking_index(sea))
+
+    #plot_gene_distribution(sea.entities, 0)
 
 if __name__ == '__main__':
     run()
