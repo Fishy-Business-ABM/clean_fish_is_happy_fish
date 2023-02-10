@@ -8,15 +8,17 @@ from util import compute_norm, normalize
 from random import random
 from fish import Fish
 
+
 class SharkAutomaton(Agent):
     """Shark (Rule-based version)
-    
+
         Training the neural network shark took us 26 hours and at the end it had the optimal strategy of barely moving if at all.
         So, we decided to use simple rules for our shark.
 
         The shark may explore around randomly until it sees a fish, in which case it tries to get as close as possible to eat it.
         It pays an energy cost at the end of each iteration.
     """
+
     def __init__(
         self,
         model: Model,
@@ -48,12 +50,12 @@ class SharkAutomaton(Agent):
         '''Get the closest prey
         '''
 
-        prey = list(self.model.get_neighbors_w_distance(self, self.perception, False))
+        prey = list(self.model.get_neighbors_w_distance(
+            self, self.perception, False))
         if len(prey) == 0:
             return None
-        prey.sort(key=lambda x: x[1]) # sort them by who is closer
+        prey.sort(key=lambda x: x[1])  # sort them by who is closer
         return prey[0]
-    
 
     def explore(self) -> None:
         '''Moves randomly at max_exploration_speed
@@ -72,8 +74,7 @@ class SharkAutomaton(Agent):
 
         return self.max_exploration_speed
 
-
-    def compute_angle(self,pos1, pos2):
+    def compute_angle(self, pos1, pos2):
         '''Computes the angle between two positions
         '''
         dx = pos2[0] - pos1[0]
@@ -81,23 +82,22 @@ class SharkAutomaton(Agent):
 
         return -atan(dy/dx)
 
-
     def hunt(self, target) -> None:
         '''Tries to get as close as needed to the target fish and eat it
         '''
 
         dist_to_target = target[1]
-        
+
         if dist_to_target < self.eat_radius:
             self.eat([target])
             return 0
 
-        if dist_to_target  <= self.max_hunting_speed:
-            self.angle = self.compute_angle(self.pos,target[0])
+        if dist_to_target <= self.max_hunting_speed:
+            self.angle = self.compute_angle(self.pos, target[0])
             self.pos = target[0].pos
             self.eat([target])
             return target[1]
-        
+
         direction_x = target[0].pos[0] - self.pos[0]
         direction_y = target[0].pos[1] - self.pos[1]
 
@@ -109,7 +109,7 @@ class SharkAutomaton(Agent):
         new_x = self.pos[0] + dx
         new_y = self.pos[1] + dy
 
-        self.angle = self.compute_angle(self.pos,(new_x,new_y))
+        self.angle = self.compute_angle(self.pos, (new_x, new_y))
         self.pos = (new_x, new_y)
 
         return self.max_hunting_speed
@@ -117,7 +117,7 @@ class SharkAutomaton(Agent):
     def eat(self, prey):
         ''' Eat potential prey within eating radius
         '''
-        for fish,dist in prey:
+        for fish, dist in prey:
             if dist <= self.eat_radius:
                 self.energy += 1
                 self.model.remove_entity(fish)
@@ -127,7 +127,6 @@ class SharkAutomaton(Agent):
         '''
         self.energy -= self.mass * distance_covered ** 2
         self.energy *= 0.99
-
 
     def step(self):
         ''' Tries to find closest prey then either explores or hunts
@@ -143,7 +142,7 @@ class SharkAutomaton(Agent):
 
         # pays cost for moving
         self.metabolize(distance_covered)
-        
+
         # is forced to stay within boundaries
         if not 0 < self.pos[0]:
             self.pos = (0, self.pos[1])
@@ -151,9 +150,9 @@ class SharkAutomaton(Agent):
         if not 0 < self.pos[1]:
             self.pos = (self.pos[0], 0)
             self.angle = pi/2
-        if not self.pos[0] < self.model.window[0]: 
+        if not self.pos[0] < self.model.window[0]:
             self.pos = (self.model.window[0], self.pos[1])
-            self.angle = pi 
+            self.angle = pi
         if not self.pos[1] < self.model.window[1]:
             self.pos = (self.pos[0], self.model.window[1])
             self.angle = 3*pi/2

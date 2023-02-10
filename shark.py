@@ -6,6 +6,7 @@ from typing import Tuple, List
 from p5 import stroke, fill, rect
 from util import compute_norm
 
+
 class Neuron(object):
     '''A simple Neuron class, output is sigmoid(sum(weight[i] * input_data[i]))
 
@@ -15,7 +16,7 @@ class Neuron(object):
     def __init__(
         self,
         weights,
-        sigmoid, # the normalization function used
+        sigmoid,  # the normalization function used
         bound
     ):
         super(Neuron, self).__init__()
@@ -26,13 +27,15 @@ class Neuron(object):
     def __call__(self, input_data):
         return self.sigmoid(
             self.bound,
-            sum([self.weights[i] * input_data[i] for i in range(len(self.weights))])
+            sum([self.weights[i] * input_data[i]
+                for i in range(len(self.weights))])
         )
 
     def __str__(self):
         return str(self.weights)
 
-def sigmoid_function(boundary: float, x: float) -> float: # between -boundary and boundary
+
+def sigmoid_function(boundary: float, x: float) -> float:  # between -boundary and boundary
     return boundary / (1 + exp(-x))
 
 
@@ -52,7 +55,7 @@ class Shark(Agent):
         weights: List[float],
         eat_radius: float,
         energy: float,
-        mass: float 
+        mass: float
     ):
         super(Shark, self).__init__(pos)
 
@@ -69,16 +72,18 @@ class Shark(Agent):
         # Mass, i.e. the relationship between speed and energy-loss in E = 0.5mv^2,
         # is related to the max speed of a fish, TODO: decide on precise relationship
         self.max_speed = 100 * self.mass
-        
-        # now we create the brain, which is basically putting structure to the weigts       
-        nb_weight_per_deep_neuron = (1 + nb_seeable_fish) * 2 # the one is for its own pos
+
+        # now we create the brain, which is basically putting structure to the weigts
+        # the one is for its own pos
+        nb_weight_per_deep_neuron = (1 + nb_seeable_fish) * 2
         end_deep_neurons = nb_weight_per_deep_neuron * nb_deep_neurons
 
         deep_layer = [
             Neuron(
-                weights = weights[i * nb_weight_per_deep_neuron: (i + 1) *nb_weight_per_deep_neuron],
-                sigmoid = lambda b, x: x,
-                bound = 1
+                weights=weights[i * nb_weight_per_deep_neuron:
+                                (i + 1) * nb_weight_per_deep_neuron],
+                sigmoid=lambda b, x: x,
+                bound=1
             )
             for i in range(nb_deep_neurons)
         ]
@@ -90,14 +95,14 @@ class Shark(Agent):
         # also, for the angle output, we want to restrain that
         # for the norm out, we also want to restrain that, so there a sigmoid is needed
         angle_out = Neuron(
-            weights = weights[end_deep_neurons:end_angle_out],
-            sigmoid = sigmoid_function,
-            bound = pi / 2
+            weights=weights[end_deep_neurons:end_angle_out],
+            sigmoid=sigmoid_function,
+            bound=pi / 2
         )
         norm_out = Neuron(
-            weights = weights[end_angle_out:], 
-            sigmoid = sigmoid_function,
-            bound = self.max_speed
+            weights=weights[end_angle_out:],
+            sigmoid=sigmoid_function,
+            bound=self.max_speed
         )
 
         out_layer = [angle_out, norm_out]
@@ -108,8 +113,9 @@ class Shark(Agent):
         ''' Find bounded number of fish within perception
         '''
 
-        prey = list(self.model.get_neighbors_w_distance(self, self.perception, False))
-        prey.sort(key=lambda x: x[1]) # sort them by who is closer
+        prey = list(self.model.get_neighbors_w_distance(
+            self, self.perception, False))
+        prey.sort(key=lambda x: x[1])  # sort them by who is closer
 
         prey = prey[:self.nb_seeable_fish]
 
@@ -120,24 +126,28 @@ class Shark(Agent):
         '''
 
         # get prey positions, fills with 0 if did not find enough preys
-        prey_positions = reduce(lambda acc, elm: acc + [elm[0].pos[0]] + [elm[0].pos[1]], prey, [])
-        prey_positions += [0 for _ in range(2 * self.nb_seeable_fish - len(prey_positions))]
+        prey_positions = reduce(lambda acc, elm: acc +
+                                [elm[0].pos[0]] + [elm[0].pos[1]], prey, [])
+        prey_positions += [0 for _ in range(2 *
+                                            self.nb_seeable_fish - len(prey_positions))]
 
         # adds own position as input
         inputs = list(self.pos) + prey_positions
 
         # normalize all input
-        inputs = [inputs[i] / self.model.window[i % 2] for i in range(len(inputs))]
+        inputs = [inputs[i] / self.model.window[i % 2]
+                  for i in range(len(inputs))]
 
         # compute front-propagation of neural network
         intermediary_outputs = [inputs]
         for layer in self.brain:
-            intermediary = [neuron(intermediary_outputs[-1]) for neuron in layer]
+            intermediary = [neuron(intermediary_outputs[-1])
+                            for neuron in layer]
             intermediary_outputs.append(intermediary)
 
         # get output
         angle, norm = intermediary_outputs[-1][0], intermediary_outputs[-1][1]
-        
+
         self.speed = norm
         self.angle = angle
 
@@ -151,7 +161,7 @@ class Shark(Agent):
         ''' Eat potential prey within eating radius
         '''
 
-        for fish,dist in prey:
+        for fish, dist in prey:
             if dist <= self.eat_radius:
                 print('eat')
                 self.energy += 1

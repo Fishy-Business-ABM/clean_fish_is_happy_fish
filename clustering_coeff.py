@@ -1,3 +1,6 @@
+import random
+from model import Model
+from fish import Fish
 from typing import Set, List, Optional
 from util import euclidian_distance
 from functools import reduce
@@ -28,7 +31,7 @@ def convert_to_graph(fish: Set['Fish']) -> List[List[float]]:
 
 def build_neighborhood_graph(fish: Set['Fish']) -> List[List[float]]:
     """Converts a set of fish into the matrix representation of a neighborhood graph
-    
+
         The neighborhood graph is caracterized by having an infinite distance between two fish that are not within perception reach of each other.
         The graph is undirected ([i][j] == [j][i]) and weighted.
         The weights are the distance between each couple of entities if not infinity.
@@ -44,9 +47,10 @@ def build_neighborhood_graph(fish: Set['Fish']) -> List[List[float]]:
             out[j][i] = out[i][j]
     return out
 
+
 def split_disjoint_graphs(graph: List[List[float]]) -> List[List[int]]:
     """Returns the list of disjoint subgraphs within input graph
-    
+
         Two graphs are disjoint if they share no edge that is not None and not infinitely-weighted.
         A disjoint subgraph is represented a list of node indices within the input graph.
     """
@@ -72,6 +76,7 @@ def split_disjoint_graphs(graph: List[List[float]]) -> List[List[int]]:
         clusters.append(current_cluster)
     return clusters
 
+
 def get_perception_clusters(entities: Set['Fish']) -> (List[List[int]], List[List[float]]):
     '''Converts a set of Fish into a list of disjoint neighborhood graphs
 
@@ -85,6 +90,7 @@ def get_perception_clusters(entities: Set['Fish']) -> (List[List[int]], List[Lis
     neighborhood_graph = build_neighborhood_graph(entities)
     clusters = split_disjoint_graphs(neighborhood_graph)
     return (clusters, neighborhood_graph)
+
 
 def get_perception_clusters_w_clustering_coefficient(entities: Set['Fish']) -> List[Tuple[List[int], float]]:
     '''Converts a set of Fish into a list of disjoint neighborhood graphs and computes the clustering coefficient of each
@@ -111,12 +117,14 @@ def get_perception_clusters_w_clustering_coefficient(entities: Set['Fish']) -> L
         return G
 
     clusters, neighborhood_graph = get_perception_clusters(entities)
-    clusters_w_nx_graphs = [(c, __convert_cluster_to_nx_graph(c, neighborhood_graph)) for c in clusters]
+    clusters_w_nx_graphs = [(c, __convert_cluster_to_nx_graph(
+        c, neighborhood_graph)) for c in clusters]
     clusters_w_clustering_k = [
         (c[0], nx.average_clustering(c[1], weight='weight')) for c in clusters_w_nx_graphs
     ]
 
     return clusters_w_clustering_k
+
 
 def get_average_clustering(entity: Set['Fish']) -> float:
     '''returns clustering coefficient of entire graph
@@ -136,11 +144,8 @@ def get_average_clustering(entity: Set['Fish']) -> float:
     return nx.average_clustering(G, weight='weight')
 
 
-from fish import Fish
-from model import Model
-import random
-
 test_genes = [0., 0., 0., 0., 0., 0.]
+
 
 def naive_test_clustering():
     # create random model
@@ -148,24 +153,24 @@ def naive_test_clustering():
     sea = Model(100, 100)
     for _ in range(4):
         Fish(
-                model=sea,
-                pos=(1 + random.random(), 1 + random.random()),
-                perception=1,
-                velocity=(0, 0),
-                energy=0,
-                eat_radius=0,
-                genes=test_genes
-            )
+            model=sea,
+            pos=(1 + random.random(), 1 + random.random()),
+            perception=1,
+            velocity=(0, 0),
+            energy=0,
+            eat_radius=0,
+            genes=test_genes
+        )
 
         Fish(
-                model=sea,
-                pos=(99 - random.random(), 99 - random.random()),
-                perception=1,
-                velocity=(0, 0),
-                energy=0,
-                eat_radius=0,
-                genes=test_genes
-            )
+            model=sea,
+            pos=(99 - random.random(), 99 - random.random()),
+            perception=1,
+            velocity=(0, 0),
+            energy=0,
+            eat_radius=0,
+            genes=test_genes
+        )
     ng = build_neighborhood_graph(sea.entities)
     clusters = split_disjoint_graphs(ng)
 
@@ -175,11 +180,13 @@ def naive_test_clustering():
 
     assert get_average_clustering(sea.entities) < 0.2
 
-    clusters_w_coeffs = get_perception_clusters_w_clustering_coefficient(sea.entities)
+    clusters_w_coeffs = get_perception_clusters_w_clustering_coefficient(
+        sea.entities)
     for i in range(len(clusters_w_coeffs)):
         for j in range(len(clusters_w_coeffs[i][0])):
             assert clusters_w_coeffs[i][0][j] == clusters[i][j]
             assert clusters_w_coeffs[i][1] > 0.4
+
 
 if __name__ == '__main__':
     naive_test_clustering()

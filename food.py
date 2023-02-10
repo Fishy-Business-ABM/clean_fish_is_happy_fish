@@ -2,6 +2,7 @@ import model
 
 from typing import Tuple
 
+
 class Food(object):
     '''Food is a regrowing food source for fish.
 
@@ -33,6 +34,6 @@ class Food(object):
         if self.available_fraction > 1:
             self.available_fraction = 1
             self.model.regrowing_foods.remove(self)
-    
+
     def step(self) -> None:
         self.regrow()

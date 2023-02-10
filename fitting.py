@@ -7,14 +7,18 @@ from math import pi, exp
 from execute import execute
 
 # Define the linear function
+
+
 def levi(x_data, c):
     y_data = []
     for x in x_data:
         if x == 0:
             y_data.append(0)
         else:
-            y_data.append(((c / (2 * pi)) ** 1/2) * exp(-c / (2 * x)) / (x ** 3/2))
+            y_data.append(((c / (2 * pi)) ** 1/2) *
+                          exp(-c / (2 * x)) / (x ** 3/2))
     return np.array(y_data)
+
 
 def fit(x_data, y_data, function):
     # Fit the function to the data
@@ -24,7 +28,8 @@ def fit(x_data, y_data, function):
     y_pred = function(x_data, *param)
 
     # Calculate the R-squared value
-    r_squared = 1 - ((y_data - y_pred) ** 2).sum() / ((y_data - y_data.mean()) ** 2).sum()
+    r_squared = 1 - ((y_data - y_pred) ** 2).sum() / \
+        ((y_data - y_data.mean()) ** 2).sum()
 
     # Plot the data and the fitted function
     plt.scatter(x_data, y_data, label='Data')
@@ -39,7 +44,8 @@ def fit(x_data, y_data, function):
     # Show the plot
     plt.show()
 
-    return (float(param[0]),float(r_squared))
+    return (float(param[0]), float(r_squared))
+
 
 def fit_levi_to_shark(id, out_shark, precision):
     step_lengths = []
@@ -57,6 +63,7 @@ def fit_levi_to_shark(id, out_shark, precision):
 
     return fit(np.array(boxes), np.array(frequencies), levi)
 
+
 out = execute(
     nb_food=10,
     nb_initial_fish=10,
@@ -64,8 +71,8 @@ out = execute(
     mass_fish=0.0001,
     food_regrowth_rate=0.005,
     max_runtime=1000
-    )
+)
 
 param, r_squared = fit_levi_to_shark(out[2][0][0]["id"], out[2], 50)
-print("Parameter: %f" %(param))
+print("Parameter: %f" % (param))
 print("R-squared value: ", r_squared)

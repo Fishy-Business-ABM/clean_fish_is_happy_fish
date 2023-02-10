@@ -3,8 +3,9 @@ from copy import copy
 
 from typing import List, Tuple
 
+
 class Model(object):
-    def __init__(self,width,height):
+    def __init__(self, width, height):
         '''A model is a continuous space in which fish and shark live.
 
             Its attributes are:
@@ -18,13 +19,13 @@ class Model(object):
         super(Model, self).__init__()
         self.entities = set()
         self.sharks = set()
-        self.window = (width,height)
+        self.window = (width, height)
         self.foods = set()
         self.regrowing_foods = set()
 
     def add_entity(self, entity) -> None:
         '''Adds a fish to the model
-            
+
             An arbitrary threshhold of 100 fish is implemented to limit computational costs
         '''
 
@@ -34,17 +35,17 @@ class Model(object):
         assert "pos" in entity.__dict__ and isinstance(entity.pos, tuple)
         self.entities.add(entity)
 
-    def add_shark(self, shark)  -> None:
+    def add_shark(self, shark) -> None:
         assert "pos" in shark.__dict__ and isinstance(shark.pos, tuple)
         self.sharks.add(shark)
 
-    def remove_entity(self, entity)  -> None:
+    def remove_entity(self, entity) -> None:
         self.entities.remove(entity)
-    
-    def remove_shark(self, shark)  -> None:
+
+    def remove_shark(self, shark) -> None:
         self.sharks.remove(shark)
 
-    def get_neighboring(self, entity: 'Entity', radius: float, is_entity_included: bool, source: List)  -> List:
+    def get_neighboring(self, entity: 'Entity', radius: float, is_entity_included: bool, source: List) -> List:
         '''Returns the list of instances of source that are within radius of given entity
         '''
 
@@ -61,11 +62,11 @@ class Model(object):
         food_set = self.get_neighboring(entity, radius, False, self.foods)
         return [x[0] for x in food_set]
 
-
     def get_neighbors(self, entity, radius, is_entity_included) -> List['Fish']:
         '''Returns the list of instances of fish that are within radius of given entity
         '''
-        neighbors_w_dist = self.get_neighbors_w_distance(entity, radius, is_entity_included)
+        neighbors_w_dist = self.get_neighbors_w_distance(
+            entity, radius, is_entity_included)
         neighbors = [x[0] for x in neighbors_w_dist]
         return neighbors
 
@@ -82,7 +83,6 @@ class Model(object):
         assert "pos" in food.__dict__ and isinstance(food.pos, tuple)
         self.regrowing_foods.add(food)
 
-    
     def step(self) -> None:
         ''' Runs the steps of every entity and every food source
         '''
@@ -130,7 +130,7 @@ class Model(object):
             shark.step()
 
         return (out_food, out_fish, out_shark)
-    
+
     def run_model(self, step_count=100) -> None:
         '''Runs the model for the given number of iterations 
         '''
